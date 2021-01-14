@@ -1,85 +1,110 @@
-const express = require('express')
-const bcrypt = require('bcryptjs')
-const jwt = require('jsonwebtoken')
+const express = require('express');
 
-const authConfig = require('../../config/auth')
-const User = require('../models/user')
-const router = express.Router()
+const bcrypt = require('bcryptjs');
 
-function generateToken( params = {} ) {
-    return jwt.sign( params, authConfig.secret,{
-        expiresIn: 86400,
-    })
+const jwt = require('jsonwebtoken');
+
+const authConfig = require('../../config/auth');
+
+const Usuario = require('../models/Usuario');
+
+const Pessoa = require('../models/Pessoa');
+
+const router = express.Router();
+
+function generateToken(params = {}) {
+	return jwt.sign(params, authConfig.secret, {
+		expiresIn: 86400
+	});
 }
 
-
-router.post('/register', async (req,res) => {
-    var verif = 0
-    var { email, password, name } = req.query
+router.post('/register', async(req, res) => {
+	var verif = 0
+	var { email, senha, nome } = req.query
+	
     if (email === undefined){
        email = req.body.email
-       password = req.body.password
-       name = req.body.name
+       senha = req.body.senha
+	   nome = req.body.nome
+	   cpf = req.body.cpf
        verif = 1
-    }
-    if(email === "" || email === undefined){
-        return res.status(401).send({error: "Campo E-Mail vazio"})
-    }
-    else if(password === "" || password === undefined){
-        return res.status(403).send({error: "Campo Senha vazio"})
-    }
-    else if(name === "" || name === undefined){
-        return res.status(402).send({error: "Campo Nome vazio"})
-    }
+	}
+	
+	if(email === "" || email === undefined){
+		return res.status(401).send({error: "Campo E-Mail vazio"})
+	}else if(senha === "" || password === undefined){
+		return res.status(403).send({error: "Campo Senha vazio"})
+	}else if(nome === "" || nome === undefined){
+		return res.status(402).send({error: "Campo Nome vazio"})
+	}else if(cpf === "" || cpf === undefined){
+		return res.status(402).send({error: "Campo Cpf vazio"})
+	}
 
-    try {
-        if (await User.findOne({ email }))
-            return res.status(404).send({error : 'Usuário já existe'})
-        var user;
-        if (verif){
-            user = await User.create(req.body)
-        }
-        else{
-            user = await User.create(req.query)
-        }
-        user.password = undefined
+	try{
 
-        return res.send({
-            user,
-            token : generateToken({ id: user.id }),
-         })
-    }
+		if(await Pessoa.findOne({cpf})){
+			return res.status(400).send({ error: 'pessoa ja existe'});
+		}
 
-    catch (err) {
-        return res.status(400).send({ error: 'Falha no registro'})
-    }
+		if(await Usuario.findOne({email})){
+			return res.status(400).send({ error: 'Usuario ja existe'});
+		}
+
+		var usuario;
+		var pessoa;
+		if (verif){
+			usuario = await Usuario.create(req.body);
+			pessoa = await Pessoa.create(req.body);
+        }else{
+			usuario = await Usuario.create(req.query);
+			pessoa = await Pessoa.create(req.query);
+		}
+		
+		usuario.senha = undefined;
+		usuario.pessoa = pessoa.id;
+
+		return res.send({
+			usuario, 
+			token: generateToken({ id: usuario.id })
+		});
+	
+	} catch (err){
+		return res.status(400).send({
+			error: 'Falha no registro'
+		})
+	}
 })
 
-router.post('/authenticate', async (req,res) => {
-    var { email, password } = req.query
-    if (email === undefined && password === undefined){
+router.post('/authenticate', async (req, res) => {
+	var { email, senha } = req.query
+    if (email === undefined && senha === undefined){
        email = req.body.email
-       password = req.body.password
+       senha = req.body.senha
     }
 
-    const user = await User.findOne({ email }).select('+password');
-    if (!user)
-      return res.status(404).send("Usuário não encontrado");
-  
-    if (!await bcrypt.compare(password, user.password))
-      return res.status(401).send({ error: 'Senha inválida' });
-    
-    
-    user.password = undefined
+	const usuario = await Usuario.findOne({email}).select('+senha');
 
-    res.send({ 
-        user,
-        token : generateToken({ id: user.id }),
-    });
-    return res.status(200)
-    
-  });
+	if(!usuario){
+		return res.status(400).send({
+			error: 'usuario not found'
+		})
+	}
 
+	if(!await bcrypt.compare(senha, usuario.senha)){
+		return res.status(400).send({
+			error: 'Invalid senha'
+		})
+	}
+
+	usuario.senha = undefined;
+
+	res.send({
+		usuario, 
+		token: generateToken({ id: usuario.id })
+	});
+
+	return res.status(200);
+})
 
 router.get('/', async (req, res) => {
     try {
@@ -101,6 +126,4 @@ router.get('/:userId', async (req, res) => {
     }
 });
 
-
-
-module.exports = app => app.use('/auth', router)
+module.exports = app => app.use('/auth', router);
