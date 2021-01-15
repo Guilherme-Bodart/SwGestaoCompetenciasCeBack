@@ -11,13 +11,10 @@ const AtividadeSchema = new mongoose.Schema({
 	descricao: {
         type: String,
     },
-    horarioInicial: {
-        type: Date,
-    },
-    horarioFinal: {
-        type: Date,
-    },
     dataInicial: {
+        type: Date,
+    },
+    dataFinal: {
         type: Date,
     },
     categoria: {

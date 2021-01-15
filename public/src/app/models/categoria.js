@@ -1,6 +1,10 @@
 const mongoose = require('../../database');
 
 const CategoriaSchema = new mongoose.Schema({
+	usuario: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Usuario',
+    },
 	nome: {
 		type: String,
 		reuire: true,
