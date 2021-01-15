@@ -7,6 +7,8 @@ const Atividade = require('../models/Atividade');
 
 const ItemProjetoUsuario = require('../models/ItemProjetoUsuario');
 
+const Usuario = require('../models/Usuario');
+
 const router = express.Router();
 
 router.use(authMiddleware);
@@ -57,25 +59,34 @@ router.get('/:projetoId', async (req, res) => {
 router.post('/', async (req, res) => {
     try {
 
-      const { nome, descricao, atividades, equipe, token} = req.query
-      if (token === undefined || token === '' || nome === undefined || descricao === undefined){
-        nome, descricao, atividades, equipe, token = req.body
-      }
+      const { nome, descricao, equipe } = req.body
+      /*(if (token === undefined || token === '' || nome === undefined || descricao === undefined){
+        nome, descricao, equipe, token = req.body
+      }*/
 
-      const projeto = await Projeto.create({ nome, descricao, usuarioCriacao: req.usuarioId, equipe, atividades})
+      const projeto = await Projeto.create({ nome, descricao, usuarioCriacao: req.usuarioId, equipe })
 	  
-      await Promise.all(equipe.map(async usuario => {
+      await Promise.all(equipe.map(async id_usuario => {
 
-        const itemProjetoUsuario = new ItemProjetoUsuario({usuario: usuario._id, projeto: projeto._id})
+        const usuario = Usuario.findById(id_usuario);
 
+        if(usuario){
+          console.log('teste1')
+
+          var itemProjetoUsuario = new ItemProjetoUsuario({usuario: usuario._id, projeto: projeto._id})
+          
+          await itemProjetoUsuario.save()
+          
+          usuario.projetos.push(itemProjetoUsuario._id);
+          
+        }
       }));
 
       await projeto.save()
-	  
-	  return res.send({ projeto })
+	    return res.send({ projeto })
 
     } catch (err) {
-        return res.status(400).send({ error: 'Erro em criar novo projeto'})
+        return res.status(400).send({ error: 'Erro em criar novo projeto - '+err})
     }
 });
 

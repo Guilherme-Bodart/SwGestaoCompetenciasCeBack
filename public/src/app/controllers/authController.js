@@ -32,7 +32,7 @@ router.post('/register', async(req, res) => {
 	
 	if(email === "" || email === undefined){
 		return res.status(401).send({error: "Campo E-Mail vazio"})
-	}else if(senha === "" || password === undefined){
+	}else if(senha === "" || senha === undefined){
 		return res.status(403).send({error: "Campo Senha vazio"})
 	}else if(nome === "" || nome === undefined){
 		return res.status(402).send({error: "Campo Nome vazio"})
