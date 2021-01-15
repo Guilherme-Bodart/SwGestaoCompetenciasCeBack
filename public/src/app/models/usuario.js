@@ -17,11 +17,6 @@ const UsuarioSchema = new mongoose.Schema({
 		type: mongoose.Schema.Types.ObjectId,
 		ref: 'Pessoa',
 	},
-	projetos: [{
-		type: mongoose.Schema.Types.ObjectId,
-		ref: 'ItemProjetoUsuario',
-		default: [],
-	}],
 	permissao: {
 		type: Number,
 		/* 1 - Paulo Passivo, 2 - Admin*/
