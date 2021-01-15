@@ -68,16 +68,12 @@ router.post('/', async (req, res) => {
 	  
       await Promise.all(equipe.map(async id_usuario => {
 
-        const usuario = Usuario.findById(id_usuario);
-
+        const usuario = await Usuario.findById(id_usuario)
         if(usuario){
-          console.log('teste1')
 
           var itemProjetoUsuario = new ItemProjetoUsuario({usuario: usuario._id, projeto: projeto._id})
           
           await itemProjetoUsuario.save()
-          
-          usuario.projetos.push(itemProjetoUsuario._id);
           
         }
       }));
