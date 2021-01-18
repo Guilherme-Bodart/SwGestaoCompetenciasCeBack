@@ -42,24 +42,28 @@ router.post('/', async (req, res) => {
 
       const { titulo, descricao, dataInicial, dataFinal, categoria, subcategoria, projeto } = req.body
       
-      if(await Categoria.findById(categoria) && await SubCategoria.findById(subcategoria) && await Projeto.findById(projeto)){
+      if(await Categoria.findById(categoria) && await SubCategoria.findById(subcategoria)){
 
-        const itemProjetoUsuario = await ItemProjetoUsuario.findOne({ usuario: req.usuarioId, projeto: projeto});
+        const item_projetoUsuario = await ItemProjetoUsuario.findOne({usuario: "6001bfe94c87342664565fd1", projeto: projeto});
 
-        if(itemProjetoUsuario){
+        if(item_projetoUsuario){
           
-          const atividade = await Atividade.create({ usuario: req.usuarioId, titulo, descricao, dataInicial, dataFinal, categoria, subcategoria })
+          const atividade = await Atividade.create({ usuario: "6001bfe94c87342664565fd1", titulo, descricao, dataInicial, dataFinal, categoria, subcategoria, item_usuario_projeto: item_projetoUsuario._id })
         
           await atividade.save()
 
-          itemProjetoUsuario.atividades.push(atividade)
+          const projeto_escolhido = await Projeto.findById(projeto);
 
-          /* TRAVEI AQI NAO CONSIGO FAZER ISSO PQP */
+          projeto_escolhido.atividades.push(atividade);
+
+          await projeto_escolhido.save();
         
           return res.send({ atividade })
         
         }else{
+          
           return res.status(400).send({ error: 'Erro em criar a atividade - Usuario nao vinculado ao projeto'})
+        
         }
 
       }else{

@@ -10,4 +10,8 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 require('./app/controllers/index')(app);
 
-app.listen(3000);
+let porta = process.env.PORT;
+if (porta == null || porta == "") {
+  porta = 3001;
+}
+app.listen(porta, () => console.log("listen on "+ JSON.stringify(porta)));

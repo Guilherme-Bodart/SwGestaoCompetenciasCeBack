@@ -24,6 +24,11 @@ const AtividadeSchema = new mongoose.Schema({
     subcategoria: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'SubCategoria',
+    },
+    item_usuario_projeto: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'ItemProjetoUsuario',
+        required: true,
     }
 })
 
