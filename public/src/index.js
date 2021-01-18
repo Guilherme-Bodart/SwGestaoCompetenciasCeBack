@@ -12,6 +12,6 @@ require('./app/controllers/index')(app);
 
 let porta = process.env.PORT;
 if (porta == null || porta == "") {
-  porta = 3001;
+  porta = 3000;
 }
 app.listen(porta, () => console.log("listen on "+ JSON.stringify(porta)));

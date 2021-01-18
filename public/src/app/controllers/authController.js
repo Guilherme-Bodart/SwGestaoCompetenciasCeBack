@@ -108,7 +108,7 @@ router.post('/authenticate', async (req, res) => {
 
 router.get('/', async (req, res) => {
     try {
-        const usuarios = await User.find({},{email:1}).sort('email')
+        const usuarios = await Usuario.find({},{email:1})
         return res.send({ usuarios })
 
     } catch (err) {
@@ -118,11 +118,11 @@ router.get('/', async (req, res) => {
 
 router.get('/:userId', async (req, res) => {
     try {
-        const usuarios = await User.findById(req.params.userId)
-        return res.send({ usuarios })
+		const usuario = await Usuario.findById(req.params.userId)
+        return res.send({ usuario })
 
     } catch (err) {
-        return res.status(400).send({ error: 'Erro em carrega os usuarios'})
+        return res.status(400).send({ error: 'Erro em carrega os usuario'})
     }
 });
 
