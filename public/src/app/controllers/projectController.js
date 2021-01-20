@@ -89,42 +89,52 @@ router.post('/', async (req, res) => {
 router.put('/:projetoId', async (req, res) => {
   
   try{
-    let nome, descricao, equipe
-    let tituloAtividade, usuario, descricaoAtividade, categoria, subcategoria
-    if(req.body.title===undefined){
-      nome = req.query.nome
-      descricao = req.query.descricao
-      equipe = req.query.equipe
-      tituloAtividade = req.query.tituloAtividade
-      usuario = req.query.usuario
-      descricaoAtividade = req.query.descricaoAtividade
-      categoria = req.query.categoria
-      subcategoria = req.query.subcategoria
-    }
-    if (req.query.nome===undefined){
-      nome = req.body.nome
-      descricao = req.body.descricao
-      equipe = req.body.equipe
-      tituloAtividade = req.body.tituloAtividade
-      usuario = req.body.usuario
-      descricaoAtividade = req.body.descricaoAtividade
-      categoria = req.body.categoria
-      subcategoria = req.body.subcategoria
-    }
-    const atividade = {nome:tituloAtividade, usuario, descricao:descricaoAtividade, categoria, subcategoria}
 
-    const projeto = await Projeto.findByIdAndUpdate(req.params.projetoId,
-       {nome, descricao, equipe}, {new: true})
-    const projetoAtividade = await new Atividade({ ...atividade, projeto: projeto._id})
-    await projetoAtividade.save()
+    nome = req.body.nome
+    descricao = req.body.descricao
+    equipe = req.body.equipe
+  
+    const projeto = await Projeto.findByIdAndUpdate(req.params.projetoId)
+    
+    var array_concat_equipe = projeto.equipe.concat(equipe);
 
-    projeto.atividades.push(projetoAtividade)
+    await Promise.all(array_concat_equipe.map(async id_usuario => {
+
+      const usuario = await Usuario.findById(id_usuario)
+
+      if(usuario){
+
+        const existe_item = await ItemProjetoUsuario.findOne({usuario: usuario._id, projeto: projeto._id})
+        
+        if(!existe_item){
+
+          var itemProjetoUsuario = new ItemProjetoUsuario({usuario: usuario._id, projeto: projeto._id})
+        
+          await itemProjetoUsuario.save()
+        
+        }else{
+
+          if(!equipe.find(element => element === usuario._id)){
+
+            existe_item.status = 0;
+
+            await existe_item.save()
+          }
+        }
+  
+      }
+    }));
+
+    projeto.nome = nome;
+    projeto.descricao = descricao;
+    projeto.equipe = equipe;
+    
     await projeto.save()
 
     return res.send({projeto})
   }
   catch(err){
-      return res.status(400).send({error:"Erro em criar novo projeto"})
+      return res.status(400).send({error:"Erro em editar o projeto"+err})
   }
 });
 

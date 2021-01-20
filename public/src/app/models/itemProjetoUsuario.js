@@ -10,6 +10,10 @@ const ItemProjetoUsuarioSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Usuario',
 		required: true,
+	},
+	status: {
+        type: Number,
+		default: 1
 	}
 })
 

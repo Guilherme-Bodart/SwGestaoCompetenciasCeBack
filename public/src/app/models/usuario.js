@@ -19,7 +19,8 @@ const UsuarioSchema = new mongoose.Schema({
 	},
 	permissao: {
 		type: Number,
-		/* 1 - Paulo Passivo, 2 - Admin*/
+		default: 1
+		/* 1 - Aluno, 2 - Admin*/
 	}
 })
 
