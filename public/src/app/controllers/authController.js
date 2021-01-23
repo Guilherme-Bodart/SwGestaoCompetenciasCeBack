@@ -20,14 +20,11 @@ function generateToken(params = {}) {
 
 router.post('/register', async(req, res) => {
 	var verif = 0
-	var { email, senha, nome } = req.query
+	var { email, senha, nome, dataNascimento, telefone, endereco, cpf, permissao } = req.query
 	
     if (email === undefined){
-       email = req.body.email
-       senha = req.body.senha
-	   nome = req.body.nome
-	   cpf = req.body.cpf
-       verif = 1
+		var { email, senha, nome, dataNascimento, telefone, endereco, cpf, permissao } = req.body
+    	verif = 1
 	}
 	
 	if(email === "" || email === undefined){
