@@ -13,6 +13,14 @@ const UsuarioSchema = new mongoose.Schema({
 		required: true,
 		select: false,
 	},
+	senhaResetToken: {
+		type: String,
+		select: false,
+	},
+	senhaResetExpires: {
+		type: Date,
+		select: false,
+	},
 	pessoa: {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: 'Pessoa',
