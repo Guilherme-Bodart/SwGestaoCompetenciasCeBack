@@ -32,7 +32,10 @@ router.get('/:categoriaId', async (req, res) => {
 router.post('/', async (req, res) => {
     try {
 
-        const { nome } = req.body
+        var { nome } = req.query;
+        if(nome === undefined){
+          var {nome} = req.body;
+        }
 
         const categoria = await Categoria.create({ usuario: req.usuarioId, nome })
       

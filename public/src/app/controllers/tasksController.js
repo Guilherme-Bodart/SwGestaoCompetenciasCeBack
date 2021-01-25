@@ -40,15 +40,19 @@ router.get('/:atividadeId', async (req, res) => {
 router.post('/', async (req, res) => {
     try {
 
-      const { titulo, descricao, dataInicial, dataFinal, categoria, subcategoria, projeto } = req.body
+      var { titulo, descricao, dataInicial, dataFinal, categoria, subcategoria, projeto } = req.query
+      
+      if (titulo === undefined){
+        var { titulo, descricao, dataInicial, dataFinal, categoria, subcategoria, projeto } = req.body
+      }
       
       if(await Categoria.findById(categoria) && await SubCategoria.findById(subcategoria)){
 
-        const item_projetoUsuario = await ItemProjetoUsuario.findOne({usuario: "6001bfe94c87342664565fd1", projeto: projeto});
+        const item_projetoUsuario = await ItemProjetoUsuario.findOne({usuario: req.usuarioId, projeto: projeto});
 
         if(item_projetoUsuario){
           
-          const atividade = await Atividade.create({ usuario: "6001bfe94c87342664565fd1", titulo, descricao, dataInicial, dataFinal, categoria, subcategoria, item_usuario_projeto: item_projetoUsuario._id })
+          const atividade = await Atividade.create({ usuario: req.usuarioId, titulo, descricao, dataInicial, dataFinal, categoria, subcategoria, item_usuario_projeto: item_projetoUsuario._id })
         
           await atividade.save()
 

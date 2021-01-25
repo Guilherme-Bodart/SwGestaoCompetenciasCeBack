@@ -128,7 +128,10 @@ router.get('/:userId', async (req, res) => {
 });
 
 router.post('/forgot_password', async (req, res) => {
-	const {email} = req.body;
+	var { email } = req.query;
+	if(email === undefined){
+		var {email} = req.body;
+	}
 
 	try{
 
@@ -153,7 +156,8 @@ router.post('/forgot_password', async (req, res) => {
 
 		mailer.sendMail({
 			to: email,
-			from: 'brennomilanezi@hotmail.com',
+			from: 'LEDS Skills <leds.skills@gmail.com>',
+			subject: 'Recuperação de Senha',
 			template: 'auth/forgot_password',
 			context: {token}
 		}, (err) => {
@@ -172,7 +176,11 @@ router.post('/forgot_password', async (req, res) => {
 });
 
 router.post('/reset_password', async (req, res) => {
-	const {email, senha, token} = req.body;
+
+	var {email, senha, token} = req.query;
+	if(email === undefined){
+		var {email, senha, token} = req.body;
+	}
 
 	try{
 

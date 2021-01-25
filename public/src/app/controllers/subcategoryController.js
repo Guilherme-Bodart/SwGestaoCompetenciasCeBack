@@ -33,7 +33,10 @@ router.get('/:subcategoriaId', async (req, res) => {
 router.post('/', async (req, res) => {
     try {
 
-        const { nome, categoria } = req.body
+        var { nome, categoria } = req.query
+        if (nome === undefined || categoria === undefined){
+          var { nome, categoria } = req.body
+        }
 
         if(await Categoria.findById(categoria)){
             const subcategoria = await SubCategoria.create({ usuario: req.usuarioId, categoria, nome })

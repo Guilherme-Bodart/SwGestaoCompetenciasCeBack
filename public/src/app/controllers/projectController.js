@@ -59,10 +59,10 @@ router.get('/:projetoId', async (req, res) => {
 router.post('/', async (req, res) => {
     try {
 
-      const { nome, descricao, equipe } = req.body
-      /*(if (token === undefined || token === '' || nome === undefined || descricao === undefined){
-        nome, descricao, equipe, token = req.body
-      }*/
+      var { nome, descricao, equipe } = req.query
+      if (nome === undefined || descricao === undefined){
+        var { nome, descricao, equipe } = req.body
+      }
 
       const projeto = await Projeto.create({ nome, descricao, usuarioCriacao: req.usuarioId, equipe })
 	  
@@ -90,9 +90,10 @@ router.put('/:projetoId', async (req, res) => {
   
   try{
 
-    nome = req.body.nome
-    descricao = req.body.descricao
-    equipe = req.body.equipe
+    var { nome, descricao, equipe } = req.query
+    if (nome === undefined || descricao === undefined){
+      var { nome, descricao, equipe } = req.body
+    }
   
     const projeto = await Projeto.findByIdAndUpdate(req.params.projetoId)
     
