@@ -11,6 +11,10 @@ const Projeto = require('../models/Projeto');
 
 const ItemProjetoUsuario = require('../models/ItemProjetoUsuario');
 
+const Usuario = require('../models/Usuario');
+
+const Pessoa = require('../models/Pessoa');
+
 const router = express.Router();
 
 router.use(authMiddleware);
@@ -29,6 +33,33 @@ router.get('/:atividadeId', async (req, res) => {
     try {
   
       const atividade = await Atividade.findById(req.params.atividadeId);
+
+      if(atividade){
+        var id_item_usuario_projeto = atividade.item_usuario_projeto;
+        const item_usuario_projeto = await ItemProjetoUsuario.findById(id_item_usuario_projeto);
+        atividade.item_usuario_projeto = item_usuario_projeto;
+
+        var id_projeto = atividade.item_usuario_projeto.projeto;
+        const projeto = await Projeto.findById(id_projeto);
+        atividade.item_usuario_projeto.projeto = projeto;
+
+        var id_categoria = atividade.categoria;
+        const categoria = await Categoria.findById(id_categoria);
+        atividade.categoria = categoria;
+
+        var id_subcategoria = atividade.subcategoria;
+        const subcategoria = await SubCategoria.findById(id_subcategoria);
+        atividade.subcategoria = subcategoria;
+
+        var id_usuario = atividade.usuario;
+        const usuario = await Usuario.findById(id_usuario);
+        atividade.usuario = usuario;
+
+        var id_pessoa = atividade.usuario.pessoa;
+        const pessoa = await Pessoa.findById(id_pessoa);
+        atividade.usuario.pessoa = pessoa;
+
+      }
   
       return res.send({ atividade })
   
