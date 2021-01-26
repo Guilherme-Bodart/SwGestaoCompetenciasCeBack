@@ -23,12 +23,11 @@ function generateToken(params = {}) {
 }
 
 router.post('/register', async(req, res) => {
-	var verif = 0
+
 	var { email, senha, nome, dataNascimento, telefone, endereco, cpf, permissao } = req.query
 	
     if (email === undefined){
 		var { email, senha, nome, dataNascimento, telefone, endereco, cpf, permissao } = req.body
-    	verif = 1
 	}
 	
 	if(email === "" || email === undefined){
@@ -53,20 +52,15 @@ router.post('/register', async(req, res) => {
 
 		var usuario;
 		var pessoa;
-		if (verif){
-			usuario = await Usuario.create(req.body);
-			pessoa = await Pessoa.create(req.body);
-        }else{
-			usuario = await Usuario.create(req.query);
-			pessoa = await Pessoa.create(req.query);
-		}
+
+		pessoa = await Pessoa.create({ nome, dataNascimento, telefone, endereco, cpf });
+		usuario = await Usuario.create({ email, senha, permissao, pessoa: pessoa._id });
 		
 		usuario.senha = undefined;
-		usuario.pessoa = pessoa.id;
 
 		return res.send({
 			usuario, 
-			token: generateToken({ id: usuario.id })
+			token: generateToken({ id: usuario._id })
 		});
 	
 	} catch (err){

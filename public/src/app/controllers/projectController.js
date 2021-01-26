@@ -7,7 +7,11 @@ const Atividade = require('../models/Atividade');
 
 const ItemProjetoUsuario = require('../models/ItemProjetoUsuario');
 
+const Categoria = require('../models/Categoria');
+const SubCategoria = require('../models/SubCategoria');
+
 const Usuario = require('../models/Usuario');
+const Pessoa = require('../models/Pessoa');
 
 const router = express.Router();
 
@@ -46,7 +50,43 @@ router.get('/title', async (req, res) => {
 router.get('/:projetoId', async (req, res) => {
   try {
 
-    const projeto = await Projeto.findById(req.params.projetoId).populate(['atividades']);
+    const projeto = await Projeto.findById(req.params.projetoId).populate(['atividades', 'equipe']);
+
+    if(projeto.equipe){
+      await Promise.all(projeto.equipe.map(async usuario => {
+
+        var id_pessoa = usuario.pessoa;
+        const pessoa = await Pessoa.findById(id_pessoa);
+        usuario.pessoa = pessoa;
+    
+      }));
+    }
+
+    if(projeto.atividades){
+      await Promise.all(projeto.atividades.map(async atividade => {
+
+        var id_item_usuario_projeto = atividade.item_usuario_projeto;
+        const item_usuario_projeto = await ItemProjetoUsuario.findById(id_item_usuario_projeto);
+        atividade.item_usuario_projeto = item_usuario_projeto;
+
+        var id_categoria = atividade.categoria;
+        const categoria = await Categoria.findById(id_categoria);
+        atividade.categoria = categoria;
+
+        var id_subcategoria = atividade.subcategoria;
+        const subcategoria = await SubCategoria.findById(id_subcategoria);
+        atividade.subcategoria = subcategoria;
+
+        var id_usuario = atividade.usuario;
+        const usuario = await Usuario.findById(id_usuario);
+        atividade.usuario = usuario;
+
+        var id_pessoa = atividade.usuario.pessoa;
+        const pessoa = await Pessoa.findById(id_pessoa);
+        atividade.usuario.pessoa = pessoa;
+
+      }));
+    }
 
     return res.send({ projeto })
 
