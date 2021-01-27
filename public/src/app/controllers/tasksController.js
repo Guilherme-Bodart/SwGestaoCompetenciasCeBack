@@ -108,7 +108,7 @@ router.post('/', async (req, res) => {
       }
 
     } catch (err) {
-        return res.status(400).send({ error: 'Erro em criar a atividade - '+err})
+        return res.status(400).send({ error: 'Erro em criar a atividade'})
     }
 });
 

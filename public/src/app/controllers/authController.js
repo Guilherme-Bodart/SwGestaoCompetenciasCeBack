@@ -208,7 +208,7 @@ router.post('/reset_password', async (req, res) => {
 
 	} catch (err){
 
-		res.status(400).send({ error: 'Erro ao recuperar senha, tente novamente'+err})
+		res.status(400).send({ error: 'Erro ao recuperar senha, tente novamente'})
 
 	}
 });
