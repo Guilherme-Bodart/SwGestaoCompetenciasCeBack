@@ -124,11 +124,10 @@ router.get('/:userId', async (req, res) => {
 router.post('/forgot_password', async (req, res) => {
 	var { email } = req.query;
 	if(email === undefined){
-		var {email} = req.body;
+		email = req.body.email;
 	}
 
 	try{
-
 		const usuario = await Usuario.findOne({email})
 
 		if(!usuario){
@@ -156,14 +155,14 @@ router.post('/forgot_password', async (req, res) => {
 			context: {token}
 		}, (err) => {
 			if(err){
-				return res.status(400).send({error: 'Erro ao enviar o email de recuperacao'+err})
+				return res.status(400).send({error: 'Erro ao enviar o email de recuperacao'})
 			}
 			return res.send();
 		})
 
 	} catch (err){
 
-		res.status(400).send({ error: 'Erro ao recuperar senha, tente novamente'+err})
+		res.status(400).send({ error: 'Erro ao recuperar senha, tente novamente'})
 
 	}
 
