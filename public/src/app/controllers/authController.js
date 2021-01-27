@@ -43,11 +43,11 @@ router.post('/register', async(req, res) => {
 	try{
 
 		if(await Pessoa.findOne({cpf})){
-			return res.status(400).send({ error: 'pessoa ja existe'});
+			return res.status(400).send({ error: 'cpf já cadastrado'});
 		}
 
 		if(await Usuario.findOne({email})){
-			return res.status(400).send({ error: 'Usuario ja existe'});
+			return res.status(400).send({ error: 'e-mail já cadastrado'});
 		}
 
 		var usuario;
@@ -81,13 +81,13 @@ router.post('/authenticate', async (req, res) => {
 
 	if(!usuario){
 		return res.status(400).send({
-			error: 'usuario nao encontrado'
+			error: 'usuário não encontrado'
 		})
 	}
 
 	if(!await bcrypt.compare(senha, usuario.senha)){
 		return res.status(400).send({
-			error: 'Invalid senha'
+			error: 'senha inválida'
 		})
 	}
 
@@ -107,7 +107,7 @@ router.get('/', async (req, res) => {
         return res.send({ usuarios })
 
     } catch (err) {
-        return res.status(400).send({ error: 'Erro em carrega os usuarios'})
+        return res.status(400).send({ error: 'Erro em carrega os usuários'})
     }
 });
 
@@ -117,7 +117,7 @@ router.get('/:userId', async (req, res) => {
         return res.send({ usuario })
 
     } catch (err) {
-        return res.status(400).send({ error: 'Erro em carrega os usuario'})
+        return res.status(400).send({ error: 'Erro em carrega os usuários'})
     }
 });
 
@@ -133,7 +133,7 @@ router.post('/forgot_password', async (req, res) => {
 
 		if(!usuario){
 			return res.status(400).send({
-				error: 'usuario nao encontrado'
+				error: 'usuário não encontrado'
 			})
 		}
 
@@ -183,7 +183,7 @@ router.post('/reset_password', async (req, res) => {
 
 		if(!usuario){
 			return res.status(400).send({
-				error: 'usuario nao encontrado'
+				error: 'usuário não encontrado'
 			})
 		}
 
