@@ -9,7 +9,7 @@ router.use(authMiddleware);
 
 router.get('/', async (req, res) => {
     try {
-      const categorias = await Categoria.find();
+      const categorias = await Categoria.find().sort('nome');
       return res.send({ categorias })
 
     } catch (err) {

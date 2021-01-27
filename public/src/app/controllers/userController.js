@@ -19,7 +19,7 @@ router.use(authMiddleware);
 
 router.get('/', async (req, res) => {
     try {
-      const usuarios = await Usuario.find();
+      const usuarios = await Usuario.find({permissao: 1}).populate('pessoa');
       return res.send({ usuarios })
 
     } catch (err) {

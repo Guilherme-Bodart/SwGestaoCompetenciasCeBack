@@ -10,7 +10,7 @@ router.use(authMiddleware);
 
 router.get('/', async (req, res) => {
     try {
-      const subcategorias = await SubCategoria.find();
+      const subcategorias = await SubCategoria.find().sort('nome').populate('categoria');
       return res.send({ subcategorias })
 
     } catch (err) {
