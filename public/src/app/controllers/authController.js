@@ -170,14 +170,14 @@ router.post('/forgot_password', async (req, res) => {
 
 router.post('/reset_password', async (req, res) => {
 
-	var {email, senha, token} = req.query;
-	if(email === undefined){
-		var {email, senha, token} = req.body;
+	var {senha, token} = req.query;
+	if(senha === undefined){
+		var {senha, token} = req.body;
 	}
 
 	try{
 
-		const usuario = await Usuario.findOne({email})
+		const usuario = await Usuario.findOne({senhaResetToken: token})
 			.select('+senhaResetToken senhaResetExpires');
 
 		if(!usuario){
