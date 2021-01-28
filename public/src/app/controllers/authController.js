@@ -155,7 +155,7 @@ router.post('/forgot_password', async (req, res) => {
 			context: {token}
 		}, (err) => {
 			if(err){
-				return res.status(400).send({error: 'Erro ao enviar o email de recuperacao'+err})
+				return res.status(400).send({error: 'Erro ao enviar o email de recuperacao'})
 			}
 			return res.send();
 		})
