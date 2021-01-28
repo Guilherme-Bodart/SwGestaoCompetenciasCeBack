@@ -14,18 +14,18 @@ router.get('/', async (req, res) => {
     try {
       const subcategorias = await SubCategoria.find().sort('nome').populate(['usuario', 'categoria']);
       
-      if(subcategorias){
+      /*if(subcategorias){
         await Promise.all(subcategorias.map(async subcategoria => {
           var id_pessoa = subcategoria.usuario.pessoa;
           const pessoa = await Pessoa.findById(id_pessoa);
           subcategoria.usuario.pessoa = pessoa;
         }));
-      }
+      }*/
 
       return res.send({ subcategorias })
 
     } catch (err) {
-      return res.status(400).send({ error: 'Erro em carregar as subcategorias'})
+      return res.status(400).send({ error: 'Erro em carregar as subcategorias'+err})
     }
 });
 
