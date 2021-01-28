@@ -1,17 +1,17 @@
 const express = require('express');
 const authMiddleware = require('../middlewares/auth');
 
-const Projeto = require('../models/Projeto');
+const Projeto = require('../models/projeto');
 
-const Atividade = require('../models/Atividade');
+const Atividade = require('../models/atividade');
 
-const ItemProjetoUsuario = require('../models/ItemProjetoUsuario');
+const ItemProjetoUsuario = require('../models/itemProjetoUsuario');
 
-const Categoria = require('../models/Categoria');
-const SubCategoria = require('../models/SubCategoria');
+const Categoria = require('../models/categoria');
+const SubCategoria = require('../models/subcategoria');
 
-const Usuario = require('../models/Usuario');
-const Pessoa = require('../models/Pessoa');
+const Usuario = require('../models/usuario');
+const Pessoa = require('../models/pessoa');
 
 const router = express.Router();
 

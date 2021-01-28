@@ -1,8 +1,8 @@
 const express = require('express');
 const authMiddleware = require('../middlewares/auth');
-const Categoria = require('../models/Categoria');
+const Categoria = require('../models/categoria');
 
-const SubCategoria = require('../models/SubCategoria');
+const SubCategoria = require('../models/subcategoria');
 
 const router = express.Router();
 
