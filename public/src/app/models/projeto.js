@@ -29,6 +29,13 @@ const ProjetoSchema = new mongoose.Schema({
         require: true,
         default:[]
     }],
+    status: {
+        type: Number,
+		default: 1
+    },
+    dataDesativado: {
+        type: Date,
+	}
 })
 
 const Projeto = mongoose.model('Projeto', ProjetoSchema);

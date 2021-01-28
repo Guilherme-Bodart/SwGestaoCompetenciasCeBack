@@ -19,7 +19,7 @@ router.use(authMiddleware);
 
 router.get('/', async (req, res) => {
     try {
-      const projetos = await Projeto.find().populate(['atividades']);
+      const projetos = await Projeto.find({status: 1}).populate(['atividades']);
       return res.send({ projetos })
 
     } catch (err) {
@@ -39,7 +39,7 @@ router.get('/tasks', async (req, res) => {
 
 router.get('/title', async (req, res) => {
   try {
-      const projetos = await Projeto.find({},{nome:1}).sort('name')
+      const projetos = await Projeto.find({status: 1}).sort('nome')
       return res.send({ projetos })
 
   } catch (err) {
