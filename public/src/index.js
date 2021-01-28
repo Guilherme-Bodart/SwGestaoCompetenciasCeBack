@@ -19,6 +19,7 @@ app.use((req, res, next) => {
 
 require('./app/controllers/index')(app);
 
+
 app.listen(process.env.PORT || 3000, function(){
   console.log("Express server listening on port %d in %s mode", this.address().port, app.settings.env);
-});isten(porta, () => console.log("listen on "+ JSON.stringify(porta)));
+});

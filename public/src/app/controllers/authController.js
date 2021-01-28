@@ -10,9 +10,9 @@ const jwt = require('jsonwebtoken');
 
 const authConfig = require('../../config/auth');
 
-const Usuario = require('../models/Usuario');
+const Usuario = require('../models/usuario');
 
-const Pessoa = require('../models/Pessoa');
+const Pessoa = require('../models/pessoa');
 
 const router = express.Router();
 
