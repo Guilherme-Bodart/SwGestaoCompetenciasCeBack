@@ -12,7 +12,11 @@ const SubCategoriaSchema = new mongoose.Schema({
 	nome: {
 		type: String,
 		reuire: true,
-    }
+    },
+	status: {
+		type: Number,
+		default: 1
+	}
 })
 
 const SubCategoria = mongoose.model('SubCategoria', SubCategoriaSchema);

@@ -19,6 +19,10 @@ const PessoaSchema = new mongoose.Schema({
 	telefone: {
 		type: String,
 	},
+	status: {
+		type: Number,
+		default: 1
+	}
 })
 
 const Pessoa = mongoose.model('Pessoa', PessoaSchema);

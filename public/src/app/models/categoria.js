@@ -9,6 +9,10 @@ const CategoriaSchema = new mongoose.Schema({
 		type: String,
 		reuire: true,
 	},
+	status: {
+		type: Number,
+		default: 1
+	}
 })
 
 const Categoria = mongoose.model('Categoria', CategoriaSchema);

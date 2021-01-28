@@ -29,7 +29,11 @@ const AtividadeSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'ItemProjetoUsuario',
         required: true,
-    }
+    },
+	status: {
+		type: Number,
+		default: 1
+	}
 })
 
 const Atividade = mongoose.model('Atividade', AtividadeSchema);

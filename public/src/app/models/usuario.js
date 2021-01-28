@@ -29,6 +29,10 @@ const UsuarioSchema = new mongoose.Schema({
 		type: Number,
 		default: 1
 		/* 1 - Aluno, 2 - Admin*/
+	},
+	status: {
+		type: Number,
+		default: 1
 	}
 })
 
