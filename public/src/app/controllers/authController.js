@@ -151,7 +151,7 @@ router.post('/forgot_password', async (req, res) => {
 			to: email,
 			from: 'LEDS Skills <leds.skills@gmail.com>',
 			subject: 'Recuperação de Senha',
-			template: 'auth/forgot_password',
+			template: 'forgot_password',
 			context: {token}
 		}, (err) => {
 			if(err){
