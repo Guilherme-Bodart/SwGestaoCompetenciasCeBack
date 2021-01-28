@@ -36,6 +36,9 @@ router.post('/', async (req, res) => {
         if(nome === undefined){
           var {nome} = req.body;
         }
+        if(nome=='' || nome==undefined){
+          return res.status(400).send({ error: 'Erro em criar a categoria'})
+        }
 
         const categoria = await Categoria.create({ usuario: req.usuarioId, nome })
       
