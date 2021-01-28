@@ -4,13 +4,21 @@ const Categoria = require('../models/categoria');
 
 const SubCategoria = require('../models/subcategoria');
 
+const Usuario = require('../models/usuario');
+const Pessoa = require('../models/pessoa');
+
 const router = express.Router();
 
 router.use(authMiddleware);
 
 router.get('/', async (req, res) => {
     try {
-      const subcategorias = await SubCategoria.find().sort('nome').populate('categoria');
+      const subcategorias = await SubCategoria.find().sort('nome').populate(['usuario', 'categoria']);
+
+      var id_pessoa = subcategorias.usuario.pessoa;
+      const pessoa = await Pessoa.findById(id_pessoa);
+      subcategorias.usuario.pessoa = pessoa;
+
       return res.send({ subcategorias })
 
     } catch (err) {
