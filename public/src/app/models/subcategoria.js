@@ -16,7 +16,11 @@ const SubCategoriaSchema = new mongoose.Schema({
 	status: {
 		type: Number,
 		default: 1
-	}
+    },
+    dataCriacao: {
+        type: Date,
+        default: Date.now(),
+	},
 })
 
 const SubCategoria = mongoose.model('SubCategoria', SubCategoriaSchema);

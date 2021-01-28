@@ -12,7 +12,11 @@ const CategoriaSchema = new mongoose.Schema({
 	status: {
 		type: Number,
 		default: 1
-	}
+	},
+	dataCriacao: {
+        type: Date,
+        default: Date.now(),
+	},
 })
 
 const Categoria = mongoose.model('Categoria', CategoriaSchema);
