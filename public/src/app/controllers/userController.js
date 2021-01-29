@@ -53,16 +53,6 @@ router.put('/:usuarioId', async(req, res) => {
 		var { email, nome, dataNascimento, telefone, endereco, cpf, permissao } = req.body
 	}
 	
-	if(email === "" || email === undefined){
-		return res.status(401).send({error: "Campo E-Mail vazio"})
-	}else if(senha === "" || senha === undefined){
-		return res.status(403).send({error: "Campo Senha vazio"})
-	}else if(nome === "" || nome === undefined){
-		return res.status(402).send({error: "Campo Nome vazio"})
-	}else if(cpf === "" || cpf === undefined){
-		return res.status(402).send({error: "Campo Cpf vazio"})
-	}
-
 	try{
 
 		var usuario;
@@ -81,12 +71,12 @@ router.put('/:usuarioId', async(req, res) => {
         pessoa.endereco = endereco
         pessoa.telefone = telefone
 
-        pessoa.save()
+        await pessoa.save()
         
         usuario.email = email
         usuario.permissao = permissao
 
-        usuario.save()
+        await usuario.save()
 
       }else{
         return res.status(400).send({
