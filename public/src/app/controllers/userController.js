@@ -80,13 +80,13 @@ router.put('/:usuarioId', async(req, res) => {
 
       }else{
         return res.status(400).send({
-          error: 'Falha ao editar o usuário'
+          error: 'Falha ao editar o usuário1'
         })
       }
 
     }else{
       return res.status(400).send({
-        error: 'Falha ao editar o usuário'
+        error: 'Falha ao editar o usuário2'
       })
     }
 
@@ -94,7 +94,7 @@ router.put('/:usuarioId', async(req, res) => {
 	
 	} catch (err){
 		return res.status(400).send({
-			error: 'Falha ao editar o usuário'
+			error: 'Falha ao editar o usuário'+err
 		})
 	}
 })
