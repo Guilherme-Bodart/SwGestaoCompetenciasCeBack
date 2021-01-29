@@ -27,20 +27,16 @@ router.get('/', async (req, res) => {
     }
 });
 
-router.get('/alunos', async (req, res) => {
-    try {
-      const usuarios = await Usuario.find({permissao: 1}).populate('pessoa');
-      return res.send({ usuarios })
-
-    } catch (err) {
-      return res.status(400).send({ error: 'Erro em carregar os usuarios'})
-    }
-});
-
 router.get('/:usuarioId', async (req, res) => {
     try {
   
       const usuario = await Usuario.findById(req.params.usuarioId);
+
+      if(usuario){
+        var id_pessoa = usuario.pessoa;
+        const pessoa = await Pessoa.findById(id_pessoa);
+        usuario.pessoa = pessoa;
+        }
   
       return res.send({ usuario })
   
@@ -48,6 +44,71 @@ router.get('/:usuarioId', async (req, res) => {
       return res.status(400).send({ error: 'Erro em carrega o usuario'})
     }
 });
+
+router.put('/:usuarioId', async(req, res) => {
+
+	var { email, nome, dataNascimento, telefone, endereco, cpf, permissao } = req.query
+	
+  if (email === undefined){
+		var { email, nome, dataNascimento, telefone, endereco, cpf, permissao } = req.body
+	}
+	
+	if(email === "" || email === undefined){
+		return res.status(401).send({error: "Campo E-Mail vazio"})
+	}else if(senha === "" || senha === undefined){
+		return res.status(403).send({error: "Campo Senha vazio"})
+	}else if(nome === "" || nome === undefined){
+		return res.status(402).send({error: "Campo Nome vazio"})
+	}else if(cpf === "" || cpf === undefined){
+		return res.status(402).send({error: "Campo Cpf vazio"})
+	}
+
+	try{
+
+		var usuario;
+
+    usuario = await Usuario.findByIdAndUpdate(req.params.usuarioId);
+    
+    if(usuario){
+
+      pessoa = await Pessoa.findByIdAndUpdate(usuario.pessoa);
+      
+      if(pessoa){
+        
+        pessoa.nome = nome
+        pessoa.dataNascimento = dataNascimento
+        pessoa.cpf = cpf
+        pessoa.endereco = endereco
+        pessoa.telefone = telefone
+
+        pessoa.save()
+        
+        usuario.email = email
+        usuario.permissao = permissao
+
+        usuario.save()
+
+      }else{
+        return res.status(400).send({
+          error: 'Falha ao editar o usuário'
+        })
+      }
+
+    }else{
+      return res.status(400).send({
+        error: 'Falha ao editar o usuário'
+      })
+    }
+
+		return res.send();
+	
+	} catch (err){
+		return res.status(400).send({
+			error: 'Falha ao editar o usuário'
+		})
+	}
+})
+
 
 router.get('/:usuarioId/tasks', async (req, res) => {
     try {
