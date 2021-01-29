@@ -19,6 +19,16 @@ router.use(authMiddleware);
 
 router.get('/', async (req, res) => {
     try {
+      const usuarios = await Usuario.find().populate('pessoa');
+      return res.send({ usuarios })
+
+    } catch (err) {
+      return res.status(400).send({ error: 'Erro em carregar os usuarios'})
+    }
+});
+
+router.get('/alunos', async (req, res) => {
+    try {
       const usuarios = await Usuario.find({permissao: 1}).populate('pessoa');
       return res.send({ usuarios })
 
