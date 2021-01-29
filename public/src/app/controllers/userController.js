@@ -88,7 +88,7 @@ router.put('/:usuarioId', async(req, res) => {
       })
     }
 
-		return res.send();
+		return res.send({usuario});
 	
 	} catch (err){
 		return res.status(400).send({
