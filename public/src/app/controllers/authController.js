@@ -79,6 +79,12 @@ router.post('/authenticate', async (req, res) => {
 
 	const usuario = await Usuario.findOne({email}).select('+senha');
 
+	if(usuario){
+		var id_pessoa = usuario.pessoa;
+		const pessoa = await Pessoa.findById(id_pessoa);
+		usuario.pessoa = pessoa;
+    }
+
 	if(!usuario){
 		return res.status(400).send({
 			error: 'usuário não encontrado'
