@@ -49,7 +49,7 @@ router.put('/:usuarioId', async(req, res) => {
 
 	var { email, nome, dataNascimento, telefone, endereco, cpf, permissao } = req.query
 	
-  if (email === undefined){
+  if (nome === undefined){
 		var { email, nome, dataNascimento, telefone, endereco, cpf, permissao } = req.body
 	}
 	
@@ -58,25 +58,23 @@ router.put('/:usuarioId', async(req, res) => {
 		var usuario;
 
     usuario = await Usuario.findByIdAndUpdate(req.params.usuarioId);
-    
+
     if(usuario){
 
       pessoa = await Pessoa.findByIdAndUpdate(usuario.pessoa);
-      
+
       if(pessoa){
-        
+
         pessoa.nome = nome
         pessoa.dataNascimento = dataNascimento
         pessoa.cpf = cpf
         pessoa.endereco = endereco
-        pessoa.telefone = telefone
+        pessoa.telefone = telefone.toString()
 
         await pessoa.save()
-        
-        usuario.email = email
-        usuario.permissao = permissao
 
-        await usuario.save()
+        usuario.permissao = permissao
+        usuario.email = email
 
       }else{
         return res.status(400).send({
