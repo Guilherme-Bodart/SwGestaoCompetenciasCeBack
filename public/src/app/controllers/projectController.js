@@ -19,11 +19,21 @@ router.use(authMiddleware);
 
 router.get('/', async (req, res) => {
     try {
-      const projetos = await Projeto.find({status: 1}).populate(['atividades']);
+      
+      const projetos = await Projeto.find({status: 1}).populate(['atividades', 'usuarioCriacao']);
+
+      if(projetos){
+        await Promise.all(projetos.map(async projeto => {
+          var id_pessoa = projeto.usuarioCriacao.pessoa;
+          const pessoa = await Pessoa.findById(id_pessoa);
+          projeto.usuarioCriacao.pessoa = pessoa;
+        }));
+      }
+
       return res.send({ projetos })
 
     } catch (err) {
-      return res.status(400).send({ error: 'Erro em carregar os projetos'})
+      return res.status(400).send({ error: 'Erro em carregar os projetos'+err})
     }
 });
 
