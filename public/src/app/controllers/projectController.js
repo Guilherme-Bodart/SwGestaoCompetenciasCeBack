@@ -114,7 +114,6 @@ router.post('/', async (req, res) => {
         var { nome, descricao, equipe } = req.body
       }
       if(nome!= '' && nome != undefined){
-
         const projeto = await Projeto.create({ nome, descricao, usuarioCriacao: req.usuarioId, equipe })
       
         await Promise.all(equipe.map(async id_usuario => {
@@ -150,35 +149,27 @@ router.put('/:projetoId', async (req, res) => {
       var { nome, descricao, equipe } = req.body
     }
     if(nome!='' && nome!=undefined){
-  
       const projeto = await Projeto.findByIdAndUpdate(req.params.projetoId)
-      
-      var array_concat_equipe = projeto.equipe.concat(equipe);
-
-      await Promise.all(array_concat_equipe.map(async id_usuario => {
-
+      await Promise.all(equipe.map(async id_usuario => {
+        if(id_usuario!=0 && id_usuario!= undefined && id_usuario!= ''){
         const usuario = await Usuario.findById(id_usuario)
+          if(usuario){
+            const existe_item = await ItemProjetoUsuario.findOne({usuario: usuario._id, projeto: projeto._id})
+            if(!existe_item){
 
-        if(usuario){
+              var itemProjetoUsuario = new ItemProjetoUsuario({usuario: usuario._id, projeto: projeto._id})
+              await itemProjetoUsuario.save()
+            }else{
 
-          const existe_item = await ItemProjetoUsuario.findOne({usuario: usuario._id, projeto: projeto._id})
-          
-          if(!existe_item){
+              if(!equipe.find(element => element === usuario._id)){
 
-            var itemProjetoUsuario = new ItemProjetoUsuario({usuario: usuario._id, projeto: projeto._id})
-          
-            await itemProjetoUsuario.save()
-          
-          }else{
+                existe_item.status = 0;
 
-            if(!equipe.find(element => element === usuario._id)){
-
-              existe_item.status = 0;
-
-              await existe_item.save()
+                await existe_item.save()
+              }
             }
+      
           }
-    
         }
       }));
 
