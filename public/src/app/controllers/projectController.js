@@ -113,23 +113,28 @@ router.post('/', async (req, res) => {
       if (nome === undefined || descricao === undefined){
         var { nome, descricao, equipe } = req.body
       }
+      if(nome!= '' && nome != undefined){
 
-      const projeto = await Projeto.create({ nome, descricao, usuarioCriacao: req.usuarioId, equipe })
-	  
-      await Promise.all(equipe.map(async id_usuario => {
+        const projeto = await Projeto.create({ nome, descricao, usuarioCriacao: req.usuarioId, equipe })
+      
+        await Promise.all(equipe.map(async id_usuario => {
 
-        const usuario = await Usuario.findById(id_usuario)
-        if(usuario){
+          const usuario = await Usuario.findById(id_usuario)
+          if(usuario){
 
-          var itemProjetoUsuario = new ItemProjetoUsuario({usuario: usuario._id, projeto: projeto._id})
-          
-          await itemProjetoUsuario.save()
-          
-        }
-      }));
+            var itemProjetoUsuario = new ItemProjetoUsuario({usuario: usuario._id, projeto: projeto._id})
+            
+            await itemProjetoUsuario.save()
+            
+          }
+        }));
 
-      await projeto.save()
-	    return res.send({ projeto })
+        await projeto.save()
+        return res.send({ projeto })
+    }
+    else {
+        return res.status(400).send({ error: 'Erro em criar novo projeto'})
+    }
 
     } catch (err) {
         return res.status(400).send({ error: 'Erro em criar novo projeto'})
@@ -144,45 +149,50 @@ router.put('/:projetoId', async (req, res) => {
     if (nome === undefined || descricao === undefined){
       var { nome, descricao, equipe } = req.body
     }
+    if(nome!='' && nome!=undefined){
   
-    const projeto = await Projeto.findByIdAndUpdate(req.params.projetoId)
-    
-    var array_concat_equipe = projeto.equipe.concat(equipe);
+      const projeto = await Projeto.findByIdAndUpdate(req.params.projetoId)
+      
+      var array_concat_equipe = projeto.equipe.concat(equipe);
 
-    await Promise.all(array_concat_equipe.map(async id_usuario => {
+      await Promise.all(array_concat_equipe.map(async id_usuario => {
 
-      const usuario = await Usuario.findById(id_usuario)
+        const usuario = await Usuario.findById(id_usuario)
 
-      if(usuario){
+        if(usuario){
 
-        const existe_item = await ItemProjetoUsuario.findOne({usuario: usuario._id, projeto: projeto._id})
-        
-        if(!existe_item){
+          const existe_item = await ItemProjetoUsuario.findOne({usuario: usuario._id, projeto: projeto._id})
+          
+          if(!existe_item){
 
-          var itemProjetoUsuario = new ItemProjetoUsuario({usuario: usuario._id, projeto: projeto._id})
-        
-          await itemProjetoUsuario.save()
-        
-        }else{
+            var itemProjetoUsuario = new ItemProjetoUsuario({usuario: usuario._id, projeto: projeto._id})
+          
+            await itemProjetoUsuario.save()
+          
+          }else{
 
-          if(!equipe.find(element => element === usuario._id)){
+            if(!equipe.find(element => element === usuario._id)){
 
-            existe_item.status = 0;
+              existe_item.status = 0;
 
-            await existe_item.save()
+              await existe_item.save()
+            }
           }
-        }
-  
-      }
-    }));
-
-    projeto.nome = nome;
-    projeto.descricao = descricao;
-    projeto.equipe = equipe;
     
-    await projeto.save()
+        }
+      }));
 
-    return res.send({projeto})
+      projeto.nome = nome;
+      projeto.descricao = descricao;
+      projeto.equipe = equipe;
+      
+      await projeto.save()
+
+      return res.send({projeto})
+    }
+    else{
+      return res.status(400).send({error:"Erro em editar o projeto"})
+    }
   }
   catch(err){
       return res.status(400).send({error:"Erro em editar o projeto"})
