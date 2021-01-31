@@ -55,13 +55,11 @@ router.put('/:usuarioId', async(req, res) => {
 	
 	try{
 
-		var usuario;
-
-    usuario = await Usuario.findByIdAndUpdate(req.params.usuarioId);
+    const usuario = await Usuario.findByIdAndUpdate(req.params.usuarioId).select('+senha');
 
     if(usuario){
 
-      pessoa = await Pessoa.findByIdAndUpdate(usuario.pessoa);
+      const pessoa = await Pessoa.findByIdAndUpdate(usuario.pessoa);
 
       if(pessoa){
 
@@ -75,6 +73,10 @@ router.put('/:usuarioId', async(req, res) => {
 
         usuario.permissao = permissao
         usuario.email = email
+
+        await usuario.save()
+
+        usuario.senha = undefined
 
       }else{
         return res.status(400).send({

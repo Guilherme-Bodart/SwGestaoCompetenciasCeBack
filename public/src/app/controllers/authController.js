@@ -53,6 +53,9 @@ router.post('/register', async(req, res) => {
 		var usuario;
 		var pessoa;
 
+		const hash = await bcrypt.hash(senha, 10);
+		senha = hash;
+
 		pessoa = await Pessoa.create({ nome, dataNascimento, telefone, endereco, cpf });
 		usuario = await Usuario.create({ email, senha, permissao, pessoa: pessoa._id });
 		
@@ -206,6 +209,8 @@ router.post('/reset_password', async (req, res) => {
 			})
 		}
 
+		const hash = await bcrypt.hash(senha, 10);
+		senha = hash;
 		usuario.senha = senha;
 
 		await usuario.save();
