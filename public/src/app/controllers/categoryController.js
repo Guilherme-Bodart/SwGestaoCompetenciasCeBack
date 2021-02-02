@@ -3,6 +3,8 @@ const authMiddleware = require('../middlewares/auth');
 
 const Categoria = require('../models/categoria');
 
+const SubCategoria = require('../models/subcategoria');
+
 const router = express.Router();
 
 router.use(authMiddleware);
@@ -27,6 +29,18 @@ router.get('/:categoriaId', async (req, res) => {
     } catch (err) {
       return res.status(400).send({ error: 'Erro em carrega a categoria'})
     }
+});
+
+router.get('/:categoriaId/subcategory', async (req, res) => {
+  try {
+
+    const subcategorias = await SubCategoria.find({categoria: req.params.categoriaId, status: 1});
+
+    return res.send({ subcategorias })
+
+  } catch (err) {
+    return res.status(400).send({ error: 'Erro em carrega a categoria'})
+  }
 });
 
 router.post('/', async (req, res) => {
