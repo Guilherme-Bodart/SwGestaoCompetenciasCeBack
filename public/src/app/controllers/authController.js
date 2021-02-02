@@ -80,7 +80,7 @@ router.post('/authenticate', async (req, res) => {
        senha = req.body.senha
     }
 
-	const usuario = await Usuario.findOne({email}).select('+senha');
+	const usuario = await Usuario.findOne({status: 1, email}).select('+senha');
 
 	if(usuario){
 		var id_pessoa = usuario.pessoa;
@@ -137,7 +137,7 @@ router.post('/forgot_password', async (req, res) => {
 	}
 
 	try{
-		const usuario = await Usuario.findOne({email})
+		const usuario = await Usuario.findOne({status: 1, email})
 
 		if(!usuario){
 			return res.status(400).send({

@@ -39,7 +39,7 @@ router.get('/', async (req, res) => {
 
 router.get('/tasks', async (req, res) => {
   try {
-      const atividades = await Atividade.find().sort('nome')
+      const atividades = await Atividade.find({status: 1}).sort('nome')
       return res.send({ atividades })
 
   } catch (err) {
@@ -192,13 +192,26 @@ router.put('/:projetoId', async (req, res) => {
 
 router.delete('/:projetoId', async (req, res) => {
     try {
-      if(req.params.projetoId){
-      await Projeto.findByIdAndDelete(req.params.projetoId);
+
+      const projeto = await Projeto.findByIdAndUpdate(req.params.projetoId)
+
+      projeto.status = 0;
+
+      await projeto.save()
+
+      const item_projetoUsuario = await ItemProjetoUsuario.find({projeto: projeto._id});
+
+      if(item_projetoUsuario){
+        
+        await Promise.all(item_projetoUsuario.map(async item => {
+
+          item.status = 0
+
+        }));
+
+        item_projetoUsuario.save()
       }
-      else{
-        await Projeto.findByIdAndDelete(req.query.projetoId);
-      }
-  
+
       return res.send({ })
   
     } catch (err) {

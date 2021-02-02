@@ -21,7 +21,7 @@ router.use(authMiddleware);
 
 router.get('/', async (req, res) => {
     try {
-      const atividades = await Atividade.find().populate(['titulo', 'descricao']);
+      const atividades = await Atividade.find({status: 1}).populate(['titulo', 'descricao']);
       return res.send({ atividades })
 
     } catch (err) {
@@ -112,15 +112,71 @@ router.post('/', async (req, res) => {
     }
 });
 
+
+router.put('/:atividadeId', async (req, res) => {
+  try {
+
+    var { titulo, descricao, dataInicial, dataFinal, categoria, subcategoria} = req.query
+    
+    if (titulo === undefined){
+      var { titulo, descricao, dataInicial, dataFinal, categoria, subcategoria } = req.body
+    }
+    
+    if(await Categoria.findById(categoria) && await SubCategoria.findById(subcategoria)){
+
+        const atividade = await Atividade.findByIdAndUpdate(req.params.atividadeId)
+      
+        atividade.titulo = titulo
+        atividade.descricao = descricao
+        atividade.dataInicial = dataInicial
+        atividade.dataFinal = dataFinal
+        atividade.categoria = categoria
+        atividade.subcategoria = subcategoria
+        
+        await atividade.save()
+      
+        return res.send({ atividade })
+      
+    }else{
+      
+      return res.status(400).send({ error: 'Erro ao editar a atividade'})
+    
+    }
+
+  } catch (err) {
+      return res.status(400).send({ error: 'Erro ao editar a atividade'})
+  }
+});
+
 router.delete('/:atividadeId', async (req, res) => {
     try {
-      if(req.params.atividadeId){
-      await Atividade.findByIdAndDelete(req.params.atividadeId);
+      const atividade = await Atividade.findByIdAndUpdate(req.params.atividadeId)
+
+      atividade.status = 0;
+
+      await atividade.save()
+
+      const item_projetoUsuario = await ItemProjetoUsuario.findById(atividade.item_usuario_projeto);
+
+      if(item_projetoUsuario){
+
+        const projeto_escolhido = await Projeto.findById(item_projetoUsuario.projeto);
+
+        if(projeto_escolhido){
+          await Promise.all(projeto_escolhido.atividades.map(async (atividade, index) => {
+
+            if(atividade == req.params.atividadeId){
+
+              projeto_escolhido.atividades.splice(index, 1);
+            
+            }
+
+          }));
+        }
+        
+        projeto_escolhido.save()
       }
-      else{
-        await Atividade.findByIdAndDelete(req.query.atividadeId);
-      }
-  
+
       return res.send({ })
   
     } catch (err) {

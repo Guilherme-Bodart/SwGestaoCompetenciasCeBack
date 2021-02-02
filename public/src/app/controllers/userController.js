@@ -102,7 +102,7 @@ router.put('/:usuarioId', async(req, res) => {
 
 router.get('/:usuarioId/tasks', async (req, res) => {
     try {
-        const atividades = await Atividade.find({usuario: req.params.usuarioId}).sort('nome').populate('categoria').populate('subcategoria').populate('item_usuario_projeto')
+        const atividades = await Atividade.find({usuario: req.params.usuarioId, status: 1}).sort('nome').populate('categoria').populate('subcategoria').populate('item_usuario_projeto')
         if(atividades){
             await Promise.all(atividades.map(async atividade => {
 
@@ -140,6 +140,20 @@ router.get('/:usuarioId/projects', async (req, res) => {
     try {
         const projetos = await ItemProjetoUsuario.find({usuario: req.params.usuarioId, status: 1}).populate('projeto')
 
+        if(projetos){
+          await Promise.all(projetos.map(async projeto => {
+              projeto = projeto.projeto
+              var id_usuario = projeto.usuarioCriacao;
+              const usuario = await Usuario.findById(id_usuario);
+              projeto.usuarioCriacao = usuario;
+
+              var id_pessoa = projeto.usuarioCriacao.pessoa;
+              const pessoa = await Pessoa.findById(id_pessoa);
+              projeto.usuarioCriacao.pessoa = pessoa;
+
+          }));
+        }
+        
         return res.send({ projetos })
   
     } catch (err) {

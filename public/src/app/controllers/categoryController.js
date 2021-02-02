@@ -9,7 +9,7 @@ router.use(authMiddleware);
 
 router.get('/', async (req, res) => {
     try {
-      const categorias = await Categoria.find().sort('nome');
+      const categorias = await Categoria.find({status: 1}).sort('nome');
       return res.send({ categorias })
 
     } catch (err) {
@@ -53,13 +53,13 @@ router.post('/', async (req, res) => {
 
 router.delete('/:categoriaId', async (req, res) => {
     try {
-      if(req.params.categoriaId){
-      await Categoria.findByIdAndDelete(req.params.categoriaId);
-      }
-      else{
-        await Categoria.findByIdAndDelete(req.query.categoriaId);
-      }
-  
+
+      const categoria = await Categoria.findByIdAndUpdate(req.params.categoriaId)
+
+      categoria.status = 0;
+
+      await categoria.save()
+
       return res.send({ })
   
     } catch (err) {

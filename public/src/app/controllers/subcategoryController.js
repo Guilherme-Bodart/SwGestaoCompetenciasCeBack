@@ -12,7 +12,7 @@ router.use(authMiddleware);
 
 router.get('/', async (req, res) => {
     try {
-      const subcategorias = await SubCategoria.find().sort('nome').populate(['usuario', 'categoria']);
+      const subcategorias = await SubCategoria.find({status: 1}).sort('nome').populate(['usuario', 'categoria']);
       
       if(subcategorias){
         await Promise.all(subcategorias.map(async subcategoria => {
@@ -105,12 +105,11 @@ router.put('/:subcategoriaId', async (req, res) => {
 
 router.delete('/:subcategoriaId', async (req, res) => {
     try {
-      if(req.params.subcategoriaId){
-      await SubCategoria.findByIdAndDelete(req.params.subcategoriaId);
-      }
-      else{
-        await SubCategoria.findByIdAndDelete(req.query.subcategoriaId);
-      }
+      const subcategoria = await SubCategoria.findByIdAndUpdate(req.params.subcategoriaId)
+
+      subcategoria.status = 0;
+
+      await subcategoria.save()
   
       return res.send({ })
   
