@@ -217,16 +217,16 @@ router.delete('/:projetoId', async (req, res) => {
         await Promise.all(item_projetoUsuario.map(async item => {
 
           item.status = 0
+          item.save()
 
         }));
-
-        item_projetoUsuario.save()
+        
       }
 
       return res.send({ })
   
     } catch (err) {
-        return res.status(400).send({ error: 'Erro em deletar o projeto'})
+        return res.status(400).send({ error: 'Erro em deletar o projeto'+err})
     }  
 });
 

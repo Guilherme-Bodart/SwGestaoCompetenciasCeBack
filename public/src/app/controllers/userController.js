@@ -202,7 +202,7 @@ router.delete('/:usuarioId', async (req, res) => {
     return res.send({ })
 
   } catch (err) {
-      return res.status(400).send({ error: 'Erro em desativar o usuário'+err})
+      return res.status(400).send({ error: 'Erro em desativar o usuário'})
   }  
 });
 
