@@ -166,6 +166,10 @@ router.put('/:projetoId', async (req, res) => {
                 existe_item.status = 0;
 
                 await existe_item.save()
+              }else{
+                existe_item.status = 1;
+
+                await existe_item.save()
               }
             }
       
