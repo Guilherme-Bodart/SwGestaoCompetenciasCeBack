@@ -149,8 +149,12 @@ router.put('/:projetoId', async (req, res) => {
       var { nome, descricao, equipe } = req.body
     }
     if(nome!='' && nome!=undefined){
+      
       const projeto = await Projeto.findByIdAndUpdate(req.params.projetoId)
-      await Promise.all(equipe.map(async id_usuario => {
+      
+      var equipe_completa = equipe.concat(projeto.equipe);
+
+      await Promise.all(equipe_completa.map(async id_usuario => {
         if(id_usuario!=0 && id_usuario!= undefined && id_usuario!= ''){
         const usuario = await Usuario.findById(id_usuario)
           if(usuario){
