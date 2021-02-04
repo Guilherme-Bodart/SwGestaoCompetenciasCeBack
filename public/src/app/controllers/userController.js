@@ -161,4 +161,33 @@ router.get('/:usuarioId/projects', async (req, res) => {
     }
 });
 
+router.delete('/:usuarioId', async (req, res) => {
+  try {
+
+    const usuario = await Usuario.findByIdAndUpdate(req.params.usuarioId)
+
+    usuario.status = 0;
+
+    await usuario.save()
+
+    const item_projetoUsuario = await ItemProjetoUsuario.find({usuario: usuario._id});
+
+    if(item_projetoUsuario){
+      
+      await Promise.all(item_projetoUsuario.map(async item => {
+
+        item.status = 0
+
+      }));
+
+      item_projetoUsuario.save()
+    }
+
+    return res.send({ })
+
+  } catch (err) {
+      return res.status(400).send({ error: 'Erro em desativar o usuário'})
+  }  
+});
+
 module.exports = app => app.use('/users', router);
