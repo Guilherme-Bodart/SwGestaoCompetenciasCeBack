@@ -161,15 +161,18 @@ router.put('/:projetoId', async (req, res) => {
               await itemProjetoUsuario.save()
             }else{
 
-              if(!equipe.find(element => element === usuario._id)){
+              if(equipe.find(element => element === id_usuario)){
+
+                existe_item.status = 1;
+
+                await existe_item.save()
+
+              }else{
 
                 existe_item.status = 0;
 
                 await existe_item.save()
-              }else{
-                existe_item.status = 1;
 
-                await existe_item.save()
               }
             }
       
