@@ -19,7 +19,7 @@ router.use(authMiddleware);
 
 router.get('/', async (req, res) => {
     try {
-      const usuarios = await Usuario.find().populate('pessoa');
+      const usuarios = await Usuario.find({status: 1}).populate('pessoa');
       return res.send({ usuarios })
 
     } catch (err) {
@@ -168,25 +168,41 @@ router.delete('/:usuarioId', async (req, res) => {
 
     usuario.status = 0;
 
-    await usuario.save()
-
     const item_projetoUsuario = await ItemProjetoUsuario.find({usuario: usuario._id});
-
+ 
     if(item_projetoUsuario){
       
       await Promise.all(item_projetoUsuario.map(async item => {
+        
+        const projeto_escolhido = await Projeto.findById(item.projeto);
+
+        if(projeto_escolhido){
+          if(projeto_escolhido.equipe){
+            await Promise.all(projeto_escolhido.equipe.map(async (usuario, index) => {
+
+              if(usuario == req.params.usuarioId){
+
+                projeto_escolhido.equipe.splice(index, 1);
+              
+              }
+          
+            }));
+            projeto_escolhido.save()
+          }
+        }
 
         item.status = 0
+        item.save()
 
       }));
 
-      item_projetoUsuario.save()
     }
+    await usuario.save()
 
     return res.send({ })
 
   } catch (err) {
-      return res.status(400).send({ error: 'Erro em desativar o usuário'})
+      return res.status(400).send({ error: 'Erro em desativar o usuário'+err})
   }  
 });
 
