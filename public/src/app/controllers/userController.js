@@ -164,7 +164,7 @@ router.get('/:usuarioId/projects', async (req, res) => {
 router.delete('/:usuarioId', async (req, res) => {
   try {
 
-    const usuario = await Usuario.findByIdAndUpdate(req.params.usuarioId)
+    const usuario = await Usuario.findByIdAndUpdate(req.params.usuarioId).select('+senha');
 
     usuario.status = 0;
 
