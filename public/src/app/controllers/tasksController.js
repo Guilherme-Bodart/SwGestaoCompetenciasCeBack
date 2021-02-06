@@ -76,35 +76,43 @@ router.post('/', async (req, res) => {
       if (titulo === undefined){
         var { titulo, descricao, dataInicial, dataFinal, categoria, subcategoria, projeto } = req.body
       }
+
+      const atividade_mesmo_horario = await Atividade.findOne({usuario: req.usuarioId, dataInicial: dataInicial, dataFinal: dataFinal});
+      if(atividade_mesmo_horario){
+        
+        return res.status(400).send({ error: 'Erro em criar a atividade - Já existe uma atividade cadastrada no mesmo horário'})
       
-      if(await Categoria.findById(categoria) && await SubCategoria.findById(subcategoria)){
-
-        const item_projetoUsuario = await ItemProjetoUsuario.findOne({usuario: req.usuarioId, projeto: projeto});
-
-        if(item_projetoUsuario){
-          
-          const atividade = await Atividade.create({ usuario: req.usuarioId, titulo, descricao, dataInicial, dataFinal, categoria, subcategoria, item_usuario_projeto: item_projetoUsuario._id })
-        
-          await atividade.save()
-
-          const projeto_escolhido = await Projeto.findById(projeto);
-
-          projeto_escolhido.atividades.push(atividade);
-
-          await projeto_escolhido.save();
-        
-          return res.send({ atividade })
-        
-        }else{
-          
-          return res.status(400).send({ error: 'Erro em criar a atividade - Usuario nao vinculado ao projeto'})
-        
-        }
-
       }else{
 
-        return res.status(400).send({ error: 'Erro em criar a atividade - Subcategoria, Categoria ou Projeto nao encontrado'})
+        if(await Categoria.findById(categoria) && await SubCategoria.findById(subcategoria)){
 
+          const item_projetoUsuario = await ItemProjetoUsuario.findOne({usuario: req.usuarioId, projeto: projeto});
+
+          if(item_projetoUsuario){
+            
+            const atividade = await Atividade.create({ usuario: req.usuarioId, titulo, descricao, dataInicial, dataFinal, categoria, subcategoria, item_usuario_projeto: item_projetoUsuario._id })
+          
+            await atividade.save()
+
+            const projeto_escolhido = await Projeto.findById(projeto);
+
+            projeto_escolhido.atividades.push(atividade);
+
+            await projeto_escolhido.save();
+          
+            return res.send({ atividade })
+          
+          }else{
+            
+            return res.status(400).send({ error: 'Erro em criar a atividade - Usuario nao vinculado ao projeto'})
+          
+          }
+
+        }else{
+
+          return res.status(400).send({ error: 'Erro em criar a atividade - Subcategoria, Categoria ou Projeto nao encontrado'})
+
+        }
       }
 
     } catch (err) {
@@ -150,35 +158,43 @@ router.put('/:atividadeId', async (req, res) => {
 
 router.delete('/:atividadeId', async (req, res) => {
     try {
+
       const atividade = await Atividade.findByIdAndUpdate(req.params.atividadeId)
 
-      atividade.status = 0;
+      let data_agora = new Date()
 
-      await atividade.save()
+      if(atividade.dataCriacao.setDate(atividade.dataCriacao.getDate() + 30) >= data_agora){
 
-      const item_projetoUsuario = await ItemProjetoUsuario.findById(atividade.item_usuario_projeto);
+        const item_projetoUsuario = await ItemProjetoUsuario.findById(atividade.item_usuario_projeto);
 
-      if(item_projetoUsuario){
+        if(item_projetoUsuario){
 
-        const projeto_escolhido = await Projeto.findById(item_projetoUsuario.projeto);
+          const projeto_escolhido = await Projeto.findById(item_projetoUsuario.projeto);
 
-        if(projeto_escolhido){
-          await Promise.all(projeto_escolhido.atividades.map(async (atividade, index) => {
+          if(projeto_escolhido){
+            await Promise.all(projeto_escolhido.atividades.map(async (atividade, index) => {
 
-            if(atividade == req.params.atividadeId){
+              if(atividade == req.params.atividadeId){
 
-              projeto_escolhido.atividades.splice(index, 1);
-            
-            }
+                projeto_escolhido.atividades.splice(index, 1);
+              
+              }
 
-          }));
+            }));
+          }
+          
+          projeto_escolhido.save()
         }
-        
-        projeto_escolhido.save()
-      }
 
-      return res.send({ })
-  
+        atividade.status = 0;
+
+        await atividade.save()
+
+        return res.send({ })
+
+      }else{
+        return res.status(400).send({ error: 'Erro em deletar a atividade - já passaram mais de 30 dias desde da criacao'})
+      }
     } catch (err) {
         return res.status(400).send({ error: 'Erro em deletar a atividade'})
     }  
