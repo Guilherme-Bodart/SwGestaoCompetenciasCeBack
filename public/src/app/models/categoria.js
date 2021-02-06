@@ -17,6 +17,9 @@ const CategoriaSchema = new mongoose.Schema({
         type: Date,
         default: Date.now(),
 	},
+	subcategorias: {
+        type: Array,
+    },
 })
 
 const Categoria = mongoose.model('Categoria', CategoriaSchema);

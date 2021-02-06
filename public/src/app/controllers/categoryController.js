@@ -17,10 +17,14 @@ router.get('/', async (req, res) => {
       const categorias = await Categoria.find({status: 1}).sort('nome').populate(['usuario']);
 
       if(categorias){
-        await Promise.all(categorias.map(async categoria => {
+        await Promise.all(categorias.map(async (categoria, index) => {
           var id_pessoa = categoria.usuario.pessoa;
           const pessoa = await Pessoa.findById(id_pessoa);
           categoria.usuario.pessoa = pessoa;
+          const subcategorias = await SubCategoria.find({categoria: categoria._id, status: 1});
+          if(subcategorias){
+            categoria.subcategorias = subcategorias;
+          }
         }));
       }
 
