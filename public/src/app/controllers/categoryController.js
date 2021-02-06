@@ -48,6 +48,33 @@ router.get('/:categoriaId', async (req, res) => {
     }
 });
 
+router.put('/:categoriaId', async (req, res) => {
+  try {
+
+      var { nome } = req.query
+      if (nome === undefined){
+        var { nome } = req.body
+      }
+
+      const categoria = await Categoria.findByIdAndUpdate(req.params.categoriaId);
+
+      if(categoria){
+        
+        categoria.nome = nome;
+        
+        await categoria.save()
+        
+        return res.send({ categoria })
+      
+      }else{
+        return res.status(400).send({ error: 'Erro ao editar a categoria'})
+      }
+
+  } catch (err) {
+      return res.status(400).send({ error: 'Erro ao editar a categoria'})
+  }
+});
+
 router.get('/:categoriaId/subcategory', async (req, res) => {
   try {
 
