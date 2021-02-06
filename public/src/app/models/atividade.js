@@ -11,6 +11,10 @@ const AtividadeSchema = new mongoose.Schema({
 	descricao: {
         type: String,
     },
+    dataCriacao: {
+        type: Date,
+        default: Date.now(),
+    },
     dataInicial: {
         type: Date,
     },

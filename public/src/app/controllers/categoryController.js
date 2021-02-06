@@ -5,17 +5,30 @@ const Categoria = require('../models/categoria');
 
 const SubCategoria = require('../models/subcategoria');
 
+const Pessoa = require('../models/pessoa');
+
 const router = express.Router();
 
 router.use(authMiddleware);
 
 router.get('/', async (req, res) => {
     try {
-      const categorias = await Categoria.find({status: 1}).sort('nome');
+      
+      const categorias = await Categoria.find({status: 1}).sort('nome').populate(['usuario']);
+
+      if(categorias){
+        await Promise.all(categorias.map(async categoria => {
+          var id_pessoa = categoria.usuario.pessoa;
+          const pessoa = await Pessoa.findById(id_pessoa);
+          categoria.usuario.pessoa = pessoa;
+        }));
+      }
+
+
       return res.send({ categorias })
 
     } catch (err) {
-      return res.status(400).send({ error: 'Erro em carregar as categorias'})
+      return res.status(400).send({ error: 'Erro em carregar as categorias'+err})
     }
 });
 
