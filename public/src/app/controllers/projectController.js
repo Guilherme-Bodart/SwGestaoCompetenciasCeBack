@@ -109,12 +109,12 @@ router.get('/:projetoId', async (req, res) => {
 router.post('/', async (req, res) => {
     try {
 
-      var { nome, descricao, equipe } = req.query
+      var { nome, descricao, equipe, entregas } = req.query
       if (nome === undefined || descricao === undefined){
-        var { nome, descricao, equipe } = req.body
+        var { nome, descricao, equipe, entregas } = req.body
       }
       if(nome!= '' && nome != undefined){
-        const projeto = await Projeto.create({ nome, descricao, usuarioCriacao: req.usuarioId, equipe })
+        const projeto = await Projeto.create({ nome, descricao, usuarioCriacao: req.usuarioId, equipe, entregas })
       
         await Promise.all(equipe.map(async id_usuario => {
 
@@ -144,10 +144,11 @@ router.put('/:projetoId', async (req, res) => {
   
   try{
 
-    var { nome, descricao, equipe } = req.query
+    var { nome, descricao, equipe, entregas } = req.query
     if (nome === undefined || descricao === undefined){
-      var { nome, descricao, equipe } = req.body
+      var { nome, descricao, equipe, entregas } = req.body
     }
+
     if(nome!='' && nome!=undefined){
       
       const projeto = await Projeto.findByIdAndUpdate(req.params.projetoId)
@@ -187,6 +188,9 @@ router.put('/:projetoId', async (req, res) => {
       projeto.nome = nome;
       projeto.descricao = descricao;
       projeto.equipe = equipe;
+      projeto.entregas = entregas;
+
+      console.log(projeto)
       
       await projeto.save()
 

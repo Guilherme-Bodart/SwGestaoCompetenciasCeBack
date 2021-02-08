@@ -29,6 +29,10 @@ const ProjetoSchema = new mongoose.Schema({
         require: true,
         default:[]
     }],
+    entregas: [{
+        type: Date,
+        default:[]
+    }],
     status: {
         type: Number,
 		default: 1
