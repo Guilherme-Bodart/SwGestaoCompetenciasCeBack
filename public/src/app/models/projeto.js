@@ -31,6 +31,7 @@ const ProjetoSchema = new mongoose.Schema({
     }],
     entregas: [{
         type: Date,
+        require: true,
         default:[]
     }],
     status: {

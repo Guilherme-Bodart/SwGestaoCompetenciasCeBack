@@ -189,8 +189,6 @@ router.put('/:projetoId', async (req, res) => {
       projeto.descricao = descricao;
       projeto.equipe = equipe;
       projeto.entregas = entregas;
-
-      console.log(projeto)
       
       await projeto.save()
 
