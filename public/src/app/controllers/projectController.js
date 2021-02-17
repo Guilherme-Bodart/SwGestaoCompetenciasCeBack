@@ -193,6 +193,8 @@ router.put('/:projetoId', async (req, res) => {
         await projeto.save()
 
         return res.send({projeto})
+      }else{
+        return res.status(400).send({error:"Erro em editar o projeto"})
       }
     }
     else{
