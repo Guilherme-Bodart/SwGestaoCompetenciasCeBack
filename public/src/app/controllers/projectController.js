@@ -148,59 +148,53 @@ router.put('/:projetoId', async (req, res) => {
     if (nome === undefined || descricao === undefined){
       var { nome, descricao, equipe, entregas } = req.body
     }
+    
+    const projeto = await Projeto.findByIdAndUpdate(req.params.projetoId)
+    if(equipe.length > 0){
+      var equipe_completa = equipe.concat(projeto.equipe);
 
-    if(nome!='' && nome!=undefined){
-      
-      const projeto = await Projeto.findByIdAndUpdate(req.params.projetoId)
-      if(equipe.length > 0){
-        var equipe_completa = equipe.concat(projeto.equipe);
+      await Promise.all(equipe_completa.map(async id_usuario => {
+        if(id_usuario!=0 && id_usuario!= undefined && id_usuario!= ''){
+        const usuario = await Usuario.findById(id_usuario)
+          if(usuario){
+            const existe_item = await ItemProjetoUsuario.findOne({usuario: usuario._id, projeto: projeto._id})
+            if(!existe_item){
 
-        await Promise.all(equipe_completa.map(async id_usuario => {
-          if(id_usuario!=0 && id_usuario!= undefined && id_usuario!= ''){
-          const usuario = await Usuario.findById(id_usuario)
-            if(usuario){
-              const existe_item = await ItemProjetoUsuario.findOne({usuario: usuario._id, projeto: projeto._id})
-              if(!existe_item){
+              var itemProjetoUsuario = new ItemProjetoUsuario({usuario: usuario._id, projeto: projeto._id})
+              await itemProjetoUsuario.save()
+            }else{
 
-                var itemProjetoUsuario = new ItemProjetoUsuario({usuario: usuario._id, projeto: projeto._id})
-                await itemProjetoUsuario.save()
+              if(equipe.find(element => element === id_usuario)){
+
+                existe_item.status = 1;
+
+                await existe_item.save()
+
               }else{
 
-                if(equipe.find(element => element === id_usuario)){
+                existe_item.status = 0;
 
-                  existe_item.status = 1;
+                await existe_item.save()
 
-                  await existe_item.save()
-
-                }else{
-
-                  existe_item.status = 0;
-
-                  await existe_item.save()
-
-                }
               }
-        
             }
+      
           }
-        }));
-      }
-      
-      projeto.nome = nome;
-      projeto.descricao = descricao;
-      projeto.equipe = equipe;
-      projeto.entregas = entregas;
-      
-      await projeto.save()
+        }
+      }));
+    }
+    
+    projeto.nome = nome;
+    projeto.descricao = descricao;
+    projeto.equipe = equipe;
+    projeto.entregas = entregas;
+    
+    await projeto.save()
 
-      return res.send({projeto})
-      
-    }
-    else{
-      return res.status(400).send({error:"Erro em editar o projeto"})
-    }
-  }
-  catch(err){
+    return res.send({projeto})
+    
+    
+  }catch(err){
       return res.status(400).send({error:"Erro em editar o projeto "+err})
   }
 });
