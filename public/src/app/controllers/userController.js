@@ -141,7 +141,7 @@ router.get('/:usuarioId/projects', async (req, res) => {
         const projetos = await ItemProjetoUsuario.find({usuario: req.params.usuarioId, status: 1}).populate('projeto')
 
         if(projetos){
-          await Promise.all(projetos.map(async projeto => {
+          await Promise.all(projetos.map(async (projeto, index) => {
               if(projeto.projeto){
                 var projeto_tem = projeto.projeto
                 var id_usuario = projeto_tem.usuarioCriacao;
@@ -151,6 +151,8 @@ router.get('/:usuarioId/projects', async (req, res) => {
                 var id_pessoa = projeto_tem.usuarioCriacao.pessoa;
                 const pessoa = await Pessoa.findById(id_pessoa);
                 projeto_tem.usuarioCriacao.pessoa = pessoa;
+              }else{
+                projetos.splice(index, 1);
               }
           }));
         }
