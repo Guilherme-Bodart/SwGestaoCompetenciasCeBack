@@ -184,18 +184,17 @@ router.put('/:projetoId', async (req, res) => {
             }
           }
         }));
-
-        projeto.nome = nome;
-        projeto.descricao = descricao;
-        projeto.equipe = equipe;
-        projeto.entregas = entregas;
-        
-        await projeto.save()
-
-        return res.send({projeto})
-      }else{
-        return res.status(400).send({error:"Erro em editar o projeto"})
       }
+      
+      projeto.nome = nome;
+      projeto.descricao = descricao;
+      projeto.equipe = equipe;
+      projeto.entregas = entregas;
+      
+      await projeto.save()
+
+      return res.send({projeto})
+      
     }
     else{
       return res.status(400).send({error:"Erro em editar o projeto"})
