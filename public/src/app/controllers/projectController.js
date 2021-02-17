@@ -201,7 +201,7 @@ router.put('/:projetoId', async (req, res) => {
     }
   }
   catch(err){
-      return res.status(400).send({error:"Erro em editar o projeto"})
+      return res.status(400).send({error:"Erro em editar o projeto "+err})
   }
 });
 
