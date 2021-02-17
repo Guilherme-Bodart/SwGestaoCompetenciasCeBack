@@ -43,7 +43,7 @@ router.get('/tasks', async (req, res) => {
       return res.send({ atividades })
 
   } catch (err) {
-      return res.status(400).send({ error: 'Erro em carrega as atividades'})
+      return res.status(400).send({ error: 'Erro em carregar as atividades'})
   }
 });
 
@@ -53,7 +53,7 @@ router.get('/title', async (req, res) => {
       return res.send({ projetos })
 
   } catch (err) {
-      return res.status(400).send({ error: 'Erro em carrega os projetos'})
+      return res.status(400).send({ error: 'Erro em carregar os projetos'})
   }
 });
 
@@ -101,7 +101,7 @@ router.get('/:projetoId', async (req, res) => {
     return res.send({ projeto })
 
   } catch (err) {
-    return res.status(400).send({ error: 'Erro em carrega o projeto'})
+    return res.status(400).send({ error: 'Erro em carregar o projeto'})
   }
 });
 

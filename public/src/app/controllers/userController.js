@@ -132,7 +132,7 @@ router.get('/:usuarioId/tasks', async (req, res) => {
         return res.send({ atividades })
   
     } catch (err) {
-        return res.status(400).send({ error: 'Erro em carrega as atividades do usuario'})
+        return res.status(400).send({ error: 'Erro em carregar as atividades do usuario'})
     }
 });
 
@@ -157,7 +157,7 @@ router.get('/:usuarioId/projects', async (req, res) => {
         return res.send({ projetos })
   
     } catch (err) {
-        return res.status(400).send({ error: 'Erro em carrega os projetos do usuario'})
+        return res.status(400).send({ error: 'Erro em carregar os projetos do usuario - '+err})
     }
 });
 
