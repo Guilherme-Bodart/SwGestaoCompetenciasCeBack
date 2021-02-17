@@ -142,15 +142,16 @@ router.get('/:usuarioId/projects', async (req, res) => {
 
         if(projetos){
           await Promise.all(projetos.map(async projeto => {
-              projeto = projeto.projeto
-              var id_usuario = projeto.usuarioCriacao;
-              const usuario = await Usuario.findById(id_usuario);
-              projeto.usuarioCriacao = usuario;
+              if(projeto.projeto){
+                var projeto_tem = projeto.projeto
+                var id_usuario = projeto_tem.usuarioCriacao;
+                const usuario = await Usuario.findById(id_usuario);
+                projeto_tem.usuarioCriacao = usuario;
 
-              var id_pessoa = projeto.usuarioCriacao.pessoa;
-              const pessoa = await Pessoa.findById(id_pessoa);
-              projeto.usuarioCriacao.pessoa = pessoa;
-
+                var id_pessoa = projeto_tem.usuarioCriacao.pessoa;
+                const pessoa = await Pessoa.findById(id_pessoa);
+                projeto_tem.usuarioCriacao.pessoa = pessoa;
+              }
           }));
         }
         
