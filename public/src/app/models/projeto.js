@@ -40,7 +40,11 @@ const ProjetoSchema = new mongoose.Schema({
     },
     dataDesativado: {
         type: Date,
-	}
+	},
+    total_horas: {
+        type: Object,
+        default:{}
+    }
 })
 
 const Projeto = mongoose.model('Projeto', ProjetoSchema);

@@ -62,12 +62,17 @@ router.get('/:projetoId', async (req, res) => {
 
     const projeto = await Projeto.findById(req.params.projetoId).populate(['atividades', 'equipe']);
 
+    var total_horas = {}
+
     if(projeto.equipe){
+
       await Promise.all(projeto.equipe.map(async usuario => {
 
         var id_pessoa = usuario.pessoa;
         const pessoa = await Pessoa.findById(id_pessoa);
         usuario.pessoa = pessoa;
+
+        total_horas[usuario._id] = 0
     
       }));
     }
@@ -95,13 +100,17 @@ router.get('/:projetoId', async (req, res) => {
         const pessoa = await Pessoa.findById(id_pessoa);
         atividade.usuario.pessoa = pessoa;
 
+        total_horas[id_usuario] = total_horas[id_usuario] + Math.ceil(Math.abs(atividade.dataFinal.getTime() - atividade.dataInicial.getTime()) / (1000 * 60 * 60));
+
       }));
     }
+    console.log(total_horas)
+    projeto.total_horas = total_horas
 
     return res.send({ projeto })
 
   } catch (err) {
-    return res.status(400).send({ error: 'Erro em carregar o projeto'})
+    return res.status(400).send({ error: 'Erro em carregar o projeto'+err})
   }
 });
 
