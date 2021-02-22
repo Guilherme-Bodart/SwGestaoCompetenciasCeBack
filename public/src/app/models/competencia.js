@@ -10,6 +10,10 @@ const CompetenciaSchema = new mongoose.Schema({
         ref: 'ItemProjetoUsuario',
         required: true,
     },
+    categoria: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Categoria',
+    },
     nota: {
 		type: Number,
 	}

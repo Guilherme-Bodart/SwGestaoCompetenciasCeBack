@@ -41,10 +41,15 @@ const ProjetoSchema = new mongoose.Schema({
     dataDesativado: {
         type: Date,
 	},
-    total_horas: {
+    competencias: {
         type: Object,
         default:{}
-    }
+    },
+    categorias: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Categoria',
+        default:[]
+    }],
 })
 
 const Projeto = mongoose.model('Projeto', ProjetoSchema);

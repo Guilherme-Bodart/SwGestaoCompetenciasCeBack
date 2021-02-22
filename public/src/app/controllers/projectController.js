@@ -6,6 +6,7 @@ const Projeto = require('../models/projeto');
 const Atividade = require('../models/atividade');
 
 const ItemProjetoUsuario = require('../models/itemProjetoUsuario');
+const Competencia = require('../models/competencia');
 
 const Categoria = require('../models/categoria');
 const SubCategoria = require('../models/subcategoria');
@@ -62,7 +63,8 @@ router.get('/:projetoId', async (req, res) => {
 
     const projeto = await Projeto.findById(req.params.projetoId).populate(['atividades', 'equipe']);
 
-    var total_horas = {}
+    var competencias = {}
+    var array_categorias = []
 
     if(projeto.equipe){
 
@@ -72,7 +74,7 @@ router.get('/:projetoId', async (req, res) => {
         const pessoa = await Pessoa.findById(id_pessoa);
         usuario.pessoa = pessoa;
 
-        total_horas[usuario._id] = 0
+        competencias[usuario._id] = {categorias_notas: {}, total_horas: 0}
     
       }));
     }
@@ -88,6 +90,21 @@ router.get('/:projetoId', async (req, res) => {
         const categoria = await Categoria.findById(id_categoria);
         atividade.categoria = categoria;
 
+        if(array_categorias.indexOf(id_categoria.toString()) === -1){
+          array_categorias.push(id_categoria.toString())
+        }
+
+        if(!competencias[atividade.usuario].categorias_notas[id_categoria]){
+          competencias[atividade.usuario].categorias_notas[id_categoria] = 0
+        }
+
+        const competencia = await Competencia.findOne({item_usuario_projeto: id_item_usuario_projeto, categoria: id_categoria});
+        if(competencia){
+          competencias[atividade.usuario].categorias_notas[id_categoria] = competencia
+        }else{
+          competencias[atividade.usuario].categorias_notas[id_categoria] = 0
+        }
+
         var id_subcategoria = atividade.subcategoria;
         const subcategoria = await SubCategoria.findById(id_subcategoria);
         atividade.subcategoria = subcategoria;
@@ -100,12 +117,13 @@ router.get('/:projetoId', async (req, res) => {
         const pessoa = await Pessoa.findById(id_pessoa);
         atividade.usuario.pessoa = pessoa;
 
-        total_horas[id_usuario] = total_horas[id_usuario] + Math.ceil(Math.abs(atividade.dataFinal.getTime() - atividade.dataInicial.getTime()) / (1000 * 60 * 60));
+        competencias[id_usuario].total_horas = competencias[id_usuario].total_horas + Math.ceil(Math.abs(atividade.dataFinal.getTime() - atividade.dataInicial.getTime()) / (1000 * 60 * 60));
 
       }));
     }
-    console.log(total_horas)
-    projeto.total_horas = total_horas
+
+    projeto.competencias = competencias
+    projeto.categorias = array_categorias
 
     return res.send({ projeto })
 
