@@ -74,7 +74,7 @@ router.get('/:projetoId', async (req, res) => {
         const pessoa = await Pessoa.findById(id_pessoa);
         usuario.pessoa = pessoa;
 
-        competencias[usuario._id] = {categorias_notas: {}, total_horas: 0}
+        competencias[usuario._id] = {nome: usuario.pessoa.nome, total_horas: 0, categorias_notas: {}}
     
       }));
     }
@@ -94,20 +94,20 @@ router.get('/:projetoId', async (req, res) => {
           array_categorias.push(id_categoria.toString())
         }
 
-        if(!competencias[atividade.usuario].categorias_notas[id_categoria]){
-          competencias[atividade.usuario].categorias_notas[id_categoria] = 0
-        }
-
-        const competencia = await Competencia.findOne({item_usuario_projeto: id_item_usuario_projeto, categoria: id_categoria});
-        if(competencia){
-          competencias[atividade.usuario].categorias_notas[id_categoria] = competencia
-        }else{
-          competencias[atividade.usuario].categorias_notas[id_categoria] = 0
-        }
-
         var id_subcategoria = atividade.subcategoria;
         const subcategoria = await SubCategoria.findById(id_subcategoria);
         atividade.subcategoria = subcategoria;
+
+        if(!competencias[atividade.usuario].categorias_notas[id_subcategoria]){
+          competencias[atividade.usuario].categorias_notas[id_subcategoria] = 0
+        }
+
+        const competencia = await Competencia.findOne({item_usuario_projeto: id_item_usuario_projeto, subcategoria: id_subcategoria});
+        if(competencia){
+          competencias[atividade.usuario].categorias_notas[id_subcategoria] = competencia.nota
+        }else{
+          competencias[atividade.usuario].categorias_notas[id_subcategoria] = 0
+        }
 
         var id_usuario = atividade.usuario;
         const usuario = await Usuario.findById(id_usuario);

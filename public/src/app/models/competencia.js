@@ -10,9 +10,9 @@ const CompetenciaSchema = new mongoose.Schema({
         ref: 'ItemProjetoUsuario',
         required: true,
     },
-    categoria: {
+    subcategoria: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Categoria',
+        ref: 'SubcCategoria',
     },
     nota: {
 		type: Number,
