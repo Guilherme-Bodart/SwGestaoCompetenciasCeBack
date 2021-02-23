@@ -112,7 +112,11 @@ router.get('/:projetoId', async (req, res) => {
           if(!competencias[atividade.usuario].subcategorias_notas[id_subcategoria]){
             var nota_subcategoria = competencia.nota
             competencias[atividade.usuario].subcategorias_notas[id_subcategoria] = nota_subcategoria
-            competencias[atividade.usuario].categorias_notas[id_categoria] = competencias[atividade.usuario].categorias_notas[id_categoria] + nota_subcategoria
+            if(competencias[atividade.usuario].categorias_notas[id_categoria]){
+              competencias[atividade.usuario].categorias_notas[id_categoria] = (competencias[atividade.usuario].categorias_notas[id_categoria] + nota_subcategoria)/2
+            }else{
+              competencias[atividade.usuario].categorias_notas[id_categoria] = nota_subcategoria
+            }
           }
         }else{
           competencias[atividade.usuario].subcategorias_notas[id_subcategoria] = 0
