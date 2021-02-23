@@ -65,6 +65,7 @@ router.get('/:projetoId', async (req, res) => {
 
     var competencias = {}
     var array_categorias = []
+    var array_subcategorias = []
 
     if(projeto.equipe){
 
@@ -74,7 +75,7 @@ router.get('/:projetoId', async (req, res) => {
         const pessoa = await Pessoa.findById(id_pessoa);
         usuario.pessoa = pessoa;
 
-        competencias[usuario._id] = {nome: usuario.pessoa.nome, total_horas: 0, categorias_horas: {}, subcategorias_horas: {}, categorias_notas: {}}
+        competencias[usuario._id] = {nome: usuario.pessoa.nome, total_horas: 0, categorias_horas: {}, subcategorias_horas: {}, categorias_notas: {}, subcategorias_notas: {}}
     
       }));
     }
@@ -98,15 +99,24 @@ router.get('/:projetoId', async (req, res) => {
         const subcategoria = await SubCategoria.findById(id_subcategoria);
         atividade.subcategoria = subcategoria;
 
-        if(!competencias[atividade.usuario].categorias_notas[id_subcategoria]){
-          competencias[atividade.usuario].categorias_notas[id_subcategoria] = 0
+        if(array_subcategorias.findIndex(cat => cat.nome == subcategoria.nome) < 0) {
+          array_subcategorias.push(subcategoria);
+        }
+
+        if(!competencias[atividade.usuario].categorias_notas[id_categoria]){
+          competencias[atividade.usuario].categorias_notas[id_categoria] = 0
         }
 
         const competencia = await Competencia.findOne({item_usuario_projeto: id_item_usuario_projeto, subcategoria: id_subcategoria});
         if(competencia){
-          competencias[atividade.usuario].categorias_notas[id_subcategoria] = competencia.nota
+          if(!competencias[atividade.usuario].subcategorias_notas[id_subcategoria]){
+            var nota_subcategoria = competencia.nota
+            competencias[atividade.usuario].subcategorias_notas[id_subcategoria] = nota_subcategoria
+            competencias[atividade.usuario].categorias_notas[id_categoria] = competencias[atividade.usuario].categorias_notas[id_categoria] + nota_subcategoria
+          }
         }else{
-          competencias[atividade.usuario].categorias_notas[id_subcategoria] = 0
+          competencias[atividade.usuario].subcategorias_notas[id_subcategoria] = 0
+          competencias[atividade.usuario].categorias_notas[id_categoria] = 0
         }
 
         var id_usuario = atividade.usuario;
@@ -140,6 +150,7 @@ router.get('/:projetoId', async (req, res) => {
 
     projeto.competencias = competencias
     projeto.categorias = array_categorias
+    projeto.subcategorias = array_subcategorias
 
     return res.send({ projeto })
 
