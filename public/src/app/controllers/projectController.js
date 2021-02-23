@@ -74,7 +74,7 @@ router.get('/:projetoId', async (req, res) => {
         const pessoa = await Pessoa.findById(id_pessoa);
         usuario.pessoa = pessoa;
 
-        competencias[usuario._id] = {nome: usuario.pessoa.nome, total_horas: 0, categorias_notas: {}}
+        competencias[usuario._id] = {nome: usuario.pessoa.nome, total_horas: 0, categorias_horas: {}, subcategorias_horas: {}, categorias_notas: {}}
     
       }));
     }
@@ -90,8 +90,8 @@ router.get('/:projetoId', async (req, res) => {
         const categoria = await Categoria.findById(id_categoria);
         atividade.categoria = categoria;
 
-        if(array_categorias.indexOf(id_categoria.toString()) === -1){
-          array_categorias.push(id_categoria.toString())
+        if(array_categorias.findIndex(cat => cat.nome == categoria.nome) < 0) {
+          array_categorias.push(categoria);
         }
 
         var id_subcategoria = atividade.subcategoria;
@@ -117,10 +117,26 @@ router.get('/:projetoId', async (req, res) => {
         const pessoa = await Pessoa.findById(id_pessoa);
         atividade.usuario.pessoa = pessoa;
 
-        competencias[id_usuario].total_horas = competencias[id_usuario].total_horas + Math.ceil(Math.abs(atividade.dataFinal.getTime() - atividade.dataInicial.getTime()) / (1000 * 60 * 60));
+        horas_atividade = Math.ceil(Math.abs(atividade.dataFinal.getTime() - atividade.dataInicial.getTime()) / (1000 * 60 * 60));
+
+        if(!competencias[id_usuario].subcategorias_horas[id_subcategoria]){
+          competencias[id_usuario].subcategorias_horas[id_subcategoria] = 0
+        }
+        
+        competencias[id_usuario].subcategorias_horas[id_subcategoria] = competencias[id_usuario].subcategorias_horas[id_subcategoria] + horas_atividade
+        
+        if(!competencias[id_usuario].categorias_horas[id_categoria]){
+          competencias[id_usuario].categorias_horas[id_categoria] = 0
+        }
+        
+        competencias[id_usuario].categorias_horas[id_categoria] = competencias[id_usuario].categorias_horas[id_categoria] + horas_atividade
+        
+        competencias[id_usuario].total_horas = competencias[id_usuario].total_horas + horas_atividade;
 
       }));
     }
+
+    array_categorias = Object.assign(array_categorias, array_categorias);
 
     projeto.competencias = competencias
     projeto.categorias = array_categorias
