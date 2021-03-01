@@ -50,6 +50,11 @@ const ProjetoSchema = new mongoose.Schema({
         ref: 'Categoria',
         default:[]
     }],
+    subcategorias: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'SubCategoria',
+        default:[]
+    }],
 })
 
 const Projeto = mongoose.model('Projeto', ProjetoSchema);
