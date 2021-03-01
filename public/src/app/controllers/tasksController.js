@@ -77,19 +77,19 @@ router.post('/', async (req, res) => {
         var { titulo, descricao, dataInicial, dataFinal, categoria, subcategoria, projeto } = req.body
       }
 
-      const atividade_mesmo_horario = await Atividade.findOne({usuario: req.usuarioId, dataInicial: {$gte: dataInicial }, dataFinal: {$gte: dataInicial }, status: 1});
-      if(atividade_mesmo_horario){
-        
-        return res.status(400).send({ error: 'Erro em criar a atividade - Já existe uma atividade cadastrada no mesmo horário'})
-      
-      }else{
+      if(await Categoria.findById(categoria) && await SubCategoria.findById(subcategoria)){
 
-        if(await Categoria.findById(categoria) && await SubCategoria.findById(subcategoria)){
+        const item_projetoUsuario = await ItemProjetoUsuario.findOne({usuario: req.usuarioId, projeto: projeto});
 
-          const item_projetoUsuario = await ItemProjetoUsuario.findOne({usuario: req.usuarioId, projeto: projeto});
+        if(item_projetoUsuario){
 
-          if(item_projetoUsuario){
+          const atividade_mesmo_horario = await Atividade.findOne({usuario: req.usuarioId, dataInicial: {$gte: dataInicial }, dataFinal: {$gte: dataInicial }, dataInicial: {$gte: dataFinal }, dataFinal: {$gte: dataFinal }, status: 1});
+          if(atividade_mesmo_horario){
             
+            return res.status(400).send({ error: 'Erro em criar a atividade - Já existe uma atividade cadastrada no mesmo horário'})
+          
+          }else{
+          
             const atividade = await Atividade.create({ usuario: req.usuarioId, titulo, descricao, dataInicial, dataFinal, categoria, subcategoria, item_usuario_projeto: item_projetoUsuario._id })
           
             await atividade.save()
@@ -101,20 +101,20 @@ router.post('/', async (req, res) => {
             await projeto_escolhido.save();
           
             return res.send({ atividade })
-          
-          }else{
-            
-            return res.status(400).send({ error: 'Erro em criar a atividade - Usuario nao vinculado ao projeto'})
-          
           }
-
+        
         }else{
-
-          return res.status(400).send({ error: 'Erro em criar a atividade - Subcategoria, Categoria ou Projeto nao encontrado'})
-
+          
+          return res.status(400).send({ error: 'Erro em criar a atividade - Usuario nao vinculado ao projeto'})
+        
         }
-      }
 
+      }else{
+
+        return res.status(400).send({ error: 'Erro em criar a atividade - Subcategoria, Categoria ou Projeto nao encontrado'})
+
+      }
+    
     } catch (err) {
         return res.status(400).send({ error: 'Erro em criar a atividade'})
     }
