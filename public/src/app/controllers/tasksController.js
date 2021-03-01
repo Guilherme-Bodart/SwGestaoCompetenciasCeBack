@@ -83,7 +83,7 @@ router.post('/', async (req, res) => {
 
         if(item_projetoUsuario){
 
-          const atividade_mesmo_horario = await Atividade.findOne({usuario: req.usuarioId, dataInicial: {$gte: dataInicial }, dataFinal: {$gte: dataInicial }, dataInicial: {$gte: dataFinal }, dataFinal: {$gte: dataFinal }, status: 1});
+          const atividade_mesmo_horario = await Atividade.findOne({usuario: req.usuarioId, dataInicial: {$lte: dataInicial }, dataFinal: {$gte: dataInicial }, dataInicial: {$lte: dataFinal }, dataFinal: {$gte: dataFinal }, status: 1});
           if(atividade_mesmo_horario){
             
             return res.status(400).send({ error: 'Erro em criar a atividade - Já existe uma atividade cadastrada no mesmo horário'})
